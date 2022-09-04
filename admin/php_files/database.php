@@ -1,27 +1,27 @@
 <?php
 class Database{
-    private $db_host = "localhost";
-    private $db_user = "root";
-    private $db_pass = "";
-    private $db_name = "ecommerce_shopping";
-    public $result = array();
-    private $mysqli = "";
-    private $myquery = "";
-    private $conn = false;
-    function __construct()
-    {
-        if (!$this->conn) {
-            $this->mysqli = new mysqli($this->db_host,$this->db_user,$this->db_pass,$this->db_name);
-           
-            if ($this->mysqli->connect_error > 0) {
-                array_push($this->result,$this->mysqli->connect_error);
-                return false;
-            }
-        }
-        else{
-            return true;
+private $db_host = "localhost";  // Change as required
+private $db_user = "root";       // Change as required
+private $db_pass = "";   // Change as required
+private $db_name = "shopping_db";   // Change as required
+private $result = array(); // Any results from a query will be stored here
+private $mysqli = ""; // This will be our mysqli object
+public $myquery = "";// used for debugging process with SQL return
+private $conn = false;
+public function __construct(){
+    if(!$this->conn){
+
+        $this->mysqli = new mysqli($this->db_host,$this->db_user,$this->db_pass,$this->db_name);
+        // Check connection
+        if ($this->mysqli->connect_errno > 0){
+          array_push($this->result,$this->mysqli->connect_error);
+          return false; // Problem selecting database return FALSE
         }
     }
+    else{
+        return true;
+    }
+}
 
     /* Function for Insert query */ 
 
@@ -55,8 +55,8 @@ class Database{
 
             $arguments = array();
 
-            foreach($params as $columnKey=>$columnValue){
-                $arguments[] = "$columnKey='$columnValue'";
+            foreach($params as $columnKey=>$columnValue){ 
+                $arguments[] = "$columnKey ='$columnValue'";
             }
             $KeyValue = implode(", ",$arguments);
 
@@ -74,8 +74,8 @@ class Database{
                 array_push($this->result,$this->mysqli->connect_error);
                 return false;
             }
-        }
 
+        }
         else{
             return false;
         }
@@ -110,19 +110,19 @@ public function delete($table,$where= null){
 /* Select Query Method Here */
 public function select($table,$row = "*",$join = null,$where = null,$order = null,$limit = null)
 {
-  if ($this->tableExists($table)) {
+  if ($this->tableExists($table)){
     
-    $sql = "SELECT $row FROM $table ";
+    $sql = " SELECT $row FROM $table ";
     if ($join != null) {
-        $sql .= "JOIN $join";
+        $sql .= " JOIN ". $join;
         # code...
     }
     if ($where != null) {
-        $sql .= "WHERE $where";
+        $sql .= " WHERE ". $where;
         # code...
     }
     if ($order != null) {
-        $sql .= "ORDER by $order";
+        $sql .= " ORDER by ". $order;
         # code...
     }
     if ($limit != null) {
@@ -134,14 +134,16 @@ public function select($table,$row = "*",$join = null,$where = null,$order = nul
        } 
        
 $start = ($page -1) * $limit;
-$sql .= "LIMIT $start , $limit";
-return true;
-    }
+$sql .= " LIMIT ".$start. "," .$limit;
 
-if ($this->mysqli->query($sql)) {
-    $this->myquery = $sql;
-   $this->result = $this->mysqli->query($this->myquery)->fetch_all(MYSQLI_ASSOC);
-//    return $this->result;
+    }
+$this->myquery = $sql;
+$query = $this->mysqli->query($sql);
+if ($query) {
+    
+   $this->result = $query->fetch_all(MYSQLI_ASSOC);
+   /*  $this->mysqli->query($sql)->fetch_all(MYSQLI_ASSOC); */
+   return true;
 }
     else{
         array_push($this->result,$this->mysqli->connect_error);
@@ -172,9 +174,53 @@ if ($this->mysqli->query($sql)) {
        }
     }
 
+    /* This function to get the result of fetch and error */
+    function getSql(){
+        $sqlval = $this->myquery;
+        $this->myquery = array();
+        return $sqlval;
+    }
+
+    /* This function to escape String from input value */
+function escapeString($data){
+   $input_val = trim($data);
+   $input_val = stripslashes($input_val);
+   $input_val = htmlspecialchars($input_val);
+   $result = $this->mysqli->real_escape_string($input_val);
+    return $result;
 }
 
-$dbObj = new Database();
+/* To get Result of fetching data from $this->result */
+function getResult(){
+    $resultVal = $this->result;
+    $this->result = array();
+    return $resultVal;
+}
+
+/* this Function is for Input Validattion */
+
+/* Destruct Method to destroy the mysqli function of construct method */
+
+function __destruct()
+{
+    if($this->conn){
+        if($this->mysqli->close()){
+            $this->conn = false;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}
+
+}
+
+
+
+ /* $dbObj = new Database();
+
+print_r($dbObj->getResult()); */
 //  $tableExist = $dbObj->tableExists('user');
 //  print_r($tableExist);
 // print_r($dbObj->result);
@@ -188,7 +234,7 @@ print_r($dbObj->result); */
  /* $delete = $dbObj->delete('user','id=3');
  print_r($delete); */
 
- $select = $dbObj->select('user','*',null,null,null,null);
- print_r($select);
+/*  $select = $dbObj->select('user','*',null,null,null,null);
+ print_r($select); */
 
 ?>

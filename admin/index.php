@@ -19,14 +19,15 @@
         <h2>Online Shop</h2>
   <div class="mb-3">
     <label for="exampleInputEmail1" class="form-label">User Name</label>
-    <input type="text" class="form-control" name="username" id="exampleInputEmail1">
+    <input type="text" class="form-control username" name="username" id="exampleInputEmail1">
   </div>
   <div class="mb-3">
     <label for="exampleInputPassword1" class="form-label">Password</label>
-    <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+    <input type="password" class="form-control password" name="password" id="exampleInputPassword1">
   </div>
   <button type="submit" name="btn" class="btn btn-primary">Submit</button>
 </form>
+
     </div>
 </div>
 
