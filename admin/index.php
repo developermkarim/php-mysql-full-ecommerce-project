@@ -1,3 +1,10 @@
+<?php
+include_once './php_files/config.php';
+session_start();
+if (isset($_SESSION['adminName'])) {
+  header("location: $base_url/admin/dashboard.php");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

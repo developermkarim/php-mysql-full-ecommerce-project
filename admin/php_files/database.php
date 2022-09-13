@@ -6,7 +6,7 @@ private $db_pass = "";   // Change as required
 private $db_name = "shopping_db";   // Change as required
 private $result = array(); // Any results from a query will be stored here
 private $mysqli = ""; // This will be our mysqli object
-public $myquery = "";// used for debugging process with SQL return
+private $myquery = "";// used for debugging process with SQL return
 private $conn = false;
 public function __construct(){
     if(!$this->conn){
@@ -65,7 +65,7 @@ public function __construct(){
             if($where != null){
                 $sql.= "WHERE $where";
             }
-
+            $this->myquery = $sql;
             if($this->mysqli->query($sql)){
                 array_push($this->result,$this->mysqli->affected_rows);
                 return true;
@@ -88,7 +88,9 @@ public function delete($table,$where= null){
         if ($where != null) {
             $sql.= " WHERE $where ";
         //    print_r($sql);
+             
             if ($this->mysqli->query($sql)) {
+                $this->myquery = $sql;
                 array_push($this->result,$this->mysqli->affected_rows);
                 return true;
 
