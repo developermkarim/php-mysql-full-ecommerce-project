@@ -1,6 +1,14 @@
+### PHP
+---
+php is called hypertext preprocessor as its libraries are already compiled. when any person request for any php page in the address bar of the browser that request is first sent to the server then server interpret php files and return back response in form of Html.
+
+What hypertext and hyperMedia means ?
+Hypertext is text which contains links to other texts. Hypertext is text displayed on a computer display or other electronic devices with references (hyperlinks) to other text that the reader can immediately access. HyperMedia is a term used for hypertext which is not constrained to be text: it can include graphics, video and sound , for example.
+
 # Ecommerce Shopping Project
 ---
 online shopping system is a [DBMS project] with both admin and user layouts.
+
 # Installation
 
 1. Install XAMPP or WAMPP.

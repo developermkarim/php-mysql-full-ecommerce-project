@@ -21,7 +21,7 @@ include 'database.php';
         if (!empty($result)){
           session_start();
            $_SESSION['adminName'] = $result[0]['admin_name'];
-            $_SESSION['admin_role'] = "admin";
+            $_SESSION['admin_role'] = "Admin";
             echo json_encode(array('success'=>'true'));exit;
         }else{
             
