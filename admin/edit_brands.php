@@ -19,10 +19,10 @@ include_once './header.php';
             if(count($result) > 0):
               foreach ($result as $row):
             ?>
-            <input type="text" class="brand_name" value="<?= $row['brand_title'];?>" name="brand_name" id="" placeholder="Brand Name"> <br><br>
+            <input type="text" class="form-control brand_name" value="<?= $row['brand_title'];?>" name="brand_name" id="" placeholder="Brand Name"> <br>
            <input type="hidden" value="<?= $row['brand_id'] ;?>" name="brand_id" >
             <h6>Brand Category</h6>
-            <select name="brand_category" class="brand_category" id="">
+            <select name="brand_category" class="form-select brand_category" id="">
                 <option value="">Brand Cateogry Name</option>
                 <?php
                 $db->select('categories','*',null,null,null,null);

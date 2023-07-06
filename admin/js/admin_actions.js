@@ -141,6 +141,92 @@ $(document).ready(function () {
 
     })
 
+    /* Update Product Here */
+    $('#update_product').submit(function (ev) {
+        ev.preventDefault();
+        $('.alert').hide();
+        var title = $('.product_title').val();
+        var cat = $('.product_category option:selected').val();
+        var sub_cat = $('.product_sub_category option:selected').val();
+        var des = $('.product_description').val();
+        var price = $('.product_price').val();
+        var qty = $('.product_qty').val();
+        var status = $('.product_status').val();
+        var image = $('.product_image').val();
+        if (title.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Title Field is Empty.</div>');
+        } else if (cat.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Category Field is Empty.</div>');
+        } else if (sub_cat.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Sub Category Field is Empty.</div>');
+        } else if (des.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Description Field is Empty.</div>');
+        } else if (price.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Price Field is Empty.</div>');
+        } else if (qty.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Quantity Field is Empty.</div>');
+        } else if (image.trim() == '') {
+            $('#update_product').prepend('<div class="alert alert-danger">Image Field is Empty.</div>');
+        } else {
+            var update_formData = new FormData(this);
+            update_formData.append('update', 1);
+            $.ajax({
+                url: './php_files/products.php',
+                type: 'post',
+                data: update_formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: (response) => {
+                    var res = response;
+                    console.log(res);
+                    if (res.hasOwnProperty('success')) {
+
+                        $('#update_product').prepend('<div class="alert alert-primary" role="alert"><strong>Product Updated is Successfully</strong></div>');
+                        settimeout(() => {
+                            window.location = URL + 'admin/products.php';
+                        }, 1000)
+                    } else if (res.hasOwnProperty('error')) {
+                        $('#update_product').prepend('<div class="alert alert-danger" role="alert"><strong>Sorry! Product not Updated</strong></div>');
+                    }
+                }
+            })
+        }
+    });
+
+    /* Delete Product Here */
+    $('.delete_product').click(function () {
+        var tr = $(this);
+        var delete_id = $(this).attr('data-id');
+        var product_sub_cat = $(this).attr('data-subcat');
+        if (confirm('Are you sure want to delete this product')) {
+            $.ajax({
+                url: './php_files/products.php',
+                type: 'post',
+                data: {
+                    delete_id,
+                    product_sub_cat
+                },
+                dataType: 'json',
+                success: function (response) {
+                    var res = response;
+                    if (res.hasOwnProperty('success')) {
+                        tr.parent().parent('tr').remove();
+                        /*   $('#productsTable').prepend(`<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                          <strong>${res.success}</strong>
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`); */
+                        console.log(res.success);
+                    } else if (res.hasOwnProperty('error')) {
+                        /*  $('#product-container').prepend(`<div class="alert alert-danger" role="alert">
+                             <strong>${res.error}</strong>
+                         </div>`); */
+                    }
+                }
+            })
+        }
+    })
+
 
     /* Add Category */
     $('#category_form').submit(function (ev) {
@@ -303,184 +389,404 @@ $(document).ready(function () {
     })
 
     /* Sub_category Update */
-    $('#editSubCategory').submit(function(ev){
+    $('#editSubCategory').submit(function (ev) {
         ev.preventDefault();
-        var form_data = new FormData(this);
-        form_data.append('update_sub_cateogry','1');
-        console.log(form_data);
+
         // var sub_cat_id = $('#sub_cat_id').val();
         var sub_cat = $('#update_sub_category_name').val();
-        var update_cat = $('#update_category_name').val();
+        var update_cat = $('#update_category_name option:selected').val();
         if (sub_cat == '') {
 
             $('#editSubCategory').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Sorry!  &nbsp; &nbsp;</strong>Sub Category Name must be filled.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
 
         } else if (update_cat == '') {
             $('#editSubCategory').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Sorry!  &nbsp; &nbsp;</strong>Category title must be selected.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-        }else{
+        } else {
+            var form_data = new FormData(this);
+            form_data.append('update_sub_cateogry', 1);
+            console.log(form_data);
 
             $.ajax({
-                url:'./php_files/sub_category.php',
-                type:"post",
-                data:form_data,
-                processData:false,
-                contentType:false,
-                dataType:'json',
-                success:(response)=>{
-                    if(response.hasOwnProperty('success')){
-                    $('#editSubCategory').prepend(`<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Congrates!  &nbsp; &nbsp; Sub Category is successfully inserted</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
-                    setTimeout(() => {
-                        window.location = URL + '/admin/sub_category.php'
-                    }, 2000);
-                }else if(response.hasOwnProperty('error')){
-                    $('#editSubCategory').prepend(`<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Congrates!  &nbsp; &nbsp; Sub Category is successfully inserted</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+                url: './php_files/sub_category.php',
+                type: "post",
+                data: form_data,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: (response) => {
+                    console.log(response);
+                    if (response.hasOwnProperty('success')) {
+                        $('#editSubCategory').prepend(`<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Congrates!  &nbsp; &nbsp; Sub Category is successfully inserted</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+                        setTimeout(() => {
+                            window.location = URL + 'admin/sub_category.php'
+                        }, 2000);
+                    } else if (response.hasOwnProperty('error')) {
+                        $('#editSubCategory').prepend(`<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Congrates!  &nbsp; &nbsp; Sub Category is successfully inserted</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+                    }
                 }
-            }
+            })
+        }
+    })
+
+    /* Sub Category Delete Here */
+    $('.delete_sub_cat').click(function () {
+        var sub_cat_tr = $(this);
+        var sub_cat_id = $(this).attr('data-id');
+        if (confirm('Are You Sure Want to Delete')) {
+            $.ajax({
+                url: './php_files/sub_category.php',
+                type: "POST",
+                data: {
+                    delete_id: sub_cat_id
+                },
+                dataType: 'json',
+                success: (response) => {
+                    var res = response;
+                    console.log(res);
+                    if (res.hasOwnProperty('success')) {
+                        $('.alert').hide();
+                        sub_cat_tr.parent().parent('tr').remove();
+                        $('.delete_sub_cat').prepend(`<div class="alert alert-success" role="alert">
+                            <strong>${res.success}</strong>
+                        </div>`);
+                    } else if (res.hasOwnProperty('error')) {
+                        alert('You Don\'t Delete This');
+                    }
+                }
             })
         }
     })
 
     /* Active INactive async Operation for Show in Header */
 
-    $('.showCat_Header').click(function(){
+    $('.showCat_Header').click(function () {
         var id = $(this).attr('data-id');
         var status = '';
-        if($(this).prop('checked') == true){
+        if ($(this).prop('checked') == true) {
             status = '1';
-        }else if($(this).prop('checked') == false){
+        } else if ($(this).prop('checked') == false) {
             status = '0';
         }
         $.ajax({
-            url:'./php_files/sub_category.php',
-            type:'post',
-            data:{id:id,show_header:status},
-            success:(response)=>{
+            url: './php_files/sub_category.php',
+            type: 'post',
+            data: {
+                id: id,
+                show_header: status
+            },
+            success: (response) => {
 
             }
         })
     })
 
-     /* Active INactive async Operation for Show in Header */
-     $('.showCat_Footer').click(function(){
+    /* Active INactive async Operation for Show in Header */
+    $('.showCat_Footer').click(function () {
         // var status = $(this).attr('data-id');
         var id = $(this).attr('data-id');
         var status = ''
-        if($(this).prop('checked') == true){
+        if ($(this).prop('checked') == true) {
             status = '1';
-          
-            }  else if($(this).prop('checked') == false){
-                status = '0';
+
+        } else if ($(this).prop('checked') == false) {
+            status = '0';
         }
         $.ajax({
-            url:'./php_files/sub_category.php',
-            type:'post',
-            data:{id:id,show_footer:status},
-            success:(response)=>{
+            url: './php_files/sub_category.php',
+            type: 'post',
+            data: {
+                id: id,
+                show_footer: status
+            },
+            success: (response) => {
 
             }
         })
 
-     });
+    });
 
-     /* Create New Brand Here */
-     $('#create_brand').submit(function(e){
+    /* Create New Brand Here */
+    $('#create_brand').submit(function (e) {
         e.preventDefault();
         $('.alert').hide();
         var title = $('.brand_name').val();
         var parent = $('.brand_category option:selected').val();
-        if(title.trim() == ''){
+        if (title.trim() == '') {
             $('#create_brand').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Sorry!  &nbsp; &nbsp;</strong>Brand Title must be filled.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-        }
-        else if(parent.trim()  == ''){
-       $('#create_brand').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Sorry! &nbsp; &nbsp; </strong> Brand Category must be filled <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-        }
-        else{
+        } else if (parent.trim() == '') {
+            $('#create_brand').prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"> <strong>Sorry! &nbsp; &nbsp; </strong> Brand Category must be filled <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        } else {
             var formData = new FormData(this);
-            formData.append('create',1);
+            formData.append('create', 1);
             $.ajax({
-                type:'post',
-                url:'./php_files/brands.php',
-                dataType:'json',
+                type: 'post',
+                url: './php_files/brands.php',
+                dataType: 'json',
                 data: formData,
-                processData:false,
-                contentType:false,
-                success:(response)=>{
+                processData: false,
+                contentType: false,
+                success: (response) => {
                     $('.alert').hide();
                     console.log(response);
                     var res = response;
-                    if(res.hasOwnProperty('success')){
+                    if (res.hasOwnProperty('success')) {
                         $('#create_brand').prepend('<div class="alert alert-success alert-dismissible fade show" role="alert">Brand Added Successfully.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-                        settimeout(()=>{
+                        settimeout(() => {
                             window.location = URL + 'admin/brands.php';
-                        },1000);
+                        }, 1000);
 
-                    }else if(res.hasOwnProperty('error')){
-                $('#createBrand').prepend(`<div class='alert alert-danger'>${res.error}</div>`)
+                    } else if (res.hasOwnProperty('error')) {
+                        $('#createBrand').prepend(`<div class='alert alert-danger'>${res.error}</div>`)
+                    }
                 }
-            }
             })
         }
-     })
+    })
 
-     /* Update Brand Here */
-     $('#update_brand').submit(function(ev){
+    /* Update Brand Here */
+    $('#update_brand').submit(function (ev) {
         ev.preventDefault();
         $('.alert').hide();
         var title = $('.brand_name').val();
         var parent = $('.brand_category option:selected').val();
-        if(title.trim() == ''){
+        if (title.trim() == '') {
             $('#update_brand').prepend('');
-        }else if(parent.trim() == ''){
+        } else if (parent.trim() == '') {
             $('#update_brand').prepend('');
-        }else{
+        } else {
             var updateFormData = new FormData(this);
-            updateFormData.append('update',1);
+            updateFormData.append('update', 1);
             $.ajax({
-                type:'post',
-                url:'./php_files/brands.php',
-                data:updateFormData,
-                processData:false,
-                contentType:false,
-                dataType:'json',
-                success:(response)=>{
+                type: 'post',
+                url: './php_files/brands.php',
+                data: updateFormData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: (response) => {
                     var res = response;
                     console.log(res);
-                    if(res.hasOwnProperty('success')){
+                    if (res.hasOwnProperty('success')) {
                         $('#update_brand').prepend('<div class="alert alert-success alert-dismissible fade show" role="alert">Brand Updated Successfully.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-                        settimeout(()=>{
-                            window.location = URL+'admin/brands.php';
-                        },1000);
-                    }else if(res.hasOwnProperty('error')){
+                        settimeout(() => {
+                            window.location = URL + 'admin/brands.php';
+                        }, 1000);
+                    } else if (res.hasOwnProperty('error')) {
                         $('#update_brand').prepend(`<div class='alert alert-danger'> ${res.error}</div>`);
-                        
+
                     }
-                   
+
 
                 }
             })
         }
-     })
+    })
 
-     /* Delete Brand Here */
-     $('.delete_brand').click(function(){
+    /* Delete Brand Here */
+
+    $('.delete_brand').click(function () {
         var tr = $(this);
         var delete_id = $(this).attr('data-id');
-        if(confirm('are you sure want to delete the brand')){
+        if (confirm('are you sure want to delete the brand')) {
+            $.ajax({
+                url: './php_files/brands.php',
+                type: 'post',
+                data: {
+                    delete_id: delete_id
+                },
+                dataType: 'json',
+                success: (response) => {
+                    var res = response;
+                    console.log(res);
+                    if (res.hasOwnProperty('success')) {
+                        tr.parent().parent('tr').remove();
+                    } else if (res.hasOwnProperty('error')) {
+                        alert('brand is not deleted');
+                    }
+                }
+            })
+        }
+    });
+
+    /* User Data Show In Details By Model */
+    $('.user_view').click(function (ev) {
+        ev.preventDefault();
+        var user_id = $(this).attr('data-id');
+
         $.ajax({
-            url:'./php_files/brands.php',
-            type:'post',
-            data:{delete_id:delete_id},
+            url: './php_files/users.php',
+            method: 'POST',
+            data: {
+                user_id: user_id
+            },
+            dataType: 'json',
+            success: (response) => {
+                // console.log(response.success[0].user_id);
+                var mainData = response.success[0];
+                var user_data = `<table class="table table-bordered">
+               <tbody>
+               <tr><td>First Name</td>
+               <td>${mainData.f_name}</td>
+               </tr>
+               <tr>
+               <td>Last Name</td><td>${mainData.l_name}</td>
+               </tr>
+               <tr>
+               <td>Username</td><td>${mainData.username}</td>
+               </tr>
+               <tr>
+               <td>Mobile</td><td>${mainData.mobile}</td>
+               </tr>
+               <tr>
+               <td>Address</td><td>${mainData.address}</td></tr>
+               <tr>
+               <td>City</td><td>${mainData.city}</td>
+               </tr>
+               <tr>
+               <td>User Status</td>`;
+
+               if(mainData.user_role == '1')
+           user_data +=   '<td>activated<td>';
+            else{
+            user_data +=    '<td>blocked<td>';
+            }
+           
+           user_data +=  `</tr>
+           </tbody>
+           </table>`;
+           $('#user-detail .modal-body').append(user_data);
+            $('#user-detail').modal('show');
+            
+            }
+       
+        })
+    })
+
+    /* Usre Block Unblock Status Changing */
+    $('.user_status').click(function (ev) {
+        ev.preventDefault();
+        var user_id = $(this).attr('data-id');
+        var user_role = $(this).attr('data-status');
+
+        $.ajax({
+            url: './php_files/users.php',
+            method: 'POST',
+            data: { user_role: user_role,user_id: user_id },
+            //  dataType:"json",
+            success: (response) => {
+                location.reload();
+                 console.log(response);
+            }
+
+        })
+    })
+
+    /* User Data delete Here */
+
+    $('.delete_user').click(function(e){
+        e.preventDefault();
+        var tr_link = $(this);
+        var id = $(this).attr('data-id');
+
+        if(confirm('Are You Sure Want to Delete The User')){ 
+            $.ajax({
+                url: './php_files/users.php',
+                method: 'POST',
+                data: { user_id: id },
+                  dataType:"json",
+                success: (response) => {
+                    var res = response
+                    if(res.hasOwnProperty('success')){
+                        tr_link.parent().parent('tr').remove();
+                    }else{
+                        alert('Sorry, User Data not Deleted')
+                    }
+                }
+            })
+        }
+
+    })
+      
+    /* Update Option Here */
+    $('#updateOptions').submit(function(ev){
+        ev.preventDefault();
+        $('.alert').hide();
+        var site_name = $('.site_name').val();
+        var site_title = $('.site_title').val();
+        var old_logo = $('.old_logo').val();
+        var new_logo = $('.new_logo').val();
+        var footer_text = $('.footer_text').val();
+        var currency = $('.currency').val();
+        var desc = $('.site_desc').val();
+        var phone = $('.phone').val();
+        var email = $('.email').val();
+        var address = $('.address').val();
+
+        if(site_name == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Site Name Field is Empty.</div>');
+        }if(site_title == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Site Title Field is Empty.</div>');
+        }else if(footer_text.trim() == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Footer Text Field is Empty.</div>');
+        }else if(currency == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Currency Format Field is Empty.</div>');
+        }else if(desc == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Site Description is empty Field is Empty.</div>');
+        }else if(phone == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Phone Field is Empty.</div>');
+        }else if(email == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Email Field is Empty.</div>');
+        }else if(address == ''){
+            $('#updateOptions').prepend('<div class="alert alert-danger">Address Field is Empty.</div>');
+        }else{
+
+        var updateForm = new FormData(this);
+        updateForm.append('update',1);
+         
+        $.ajax({
+            url:'./php_files/options.php',
+            type:'POST',
+            data:updateForm,
+            contentType:false,
+            processData:false,
             dataType:'json',
             success:(response)=>{
-                var res = response;
-                console.log(res);
-                if(res.hasOwnProperty('success')){
-                    tr.parent().parent('tr').remove();
-                }else if(res.hasOwnProperty('error')){
-                    alert('brand is not deleted');
+                $('.alert').hide();
+                console.log(response);
+                if (response.hasOwnProperty('success')) {
+                    $('#updateOptions').prepend(`<div class="alert alert-success" role="alert">
+                        <strong>${response.msg}</strong>
+                    </div>`);
+                    settimeout(()=>{
+
+                        window.location()
+                    },1000)
+                }else if(response.hasOwnProperty('error')){
+                    $('#updateOptions').prepend(`<div class="alert alert-danger" role="alert">
+                    <strong>${response.error}</strong>
+                </div>`);
                 }
             }
         })
     }
-     })
+
+    })
+
+    /* Live Image Show By Updating */
+
+    $('.new_logo').change(function(){
+        changePicture(this)
+    })
+
+    function changePicture(current_input){
+
+        if(current_input.files && current_input.files[0]){
+            var reader = new FileReader();
+            reader.onload = function(ev){
+                $('#image').attr('src',ev.target.result);
+
+            }
+            reader.readAsDataURL(current_input.files[0]) // convert to base64 string
+        }
+    }
 });

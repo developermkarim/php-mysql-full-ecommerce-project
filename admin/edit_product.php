@@ -1,0 +1,141 @@
+<?php
+include 'header.php';
+?>
+
+<div class="main" id="main">
+
+    <h2 class="admin-heading">Update Product</h2>
+    <form id="update_product" class="add post form row" method="post" enctype="multipart/form-data">
+        <div class="col-md-9">
+        <?php
+        $db = new Database;
+        $product_id = $_GET['product_id'];
+        $db->select('products','*',null,"product_id={$product_id}",null,null);
+        $product_result = $db->getResult();
+        if(count($product_result) > 0):
+            foreach($product_result as $product_row):
+        ?>
+        <div class="form-group mb-3">
+                <label for="">Product Title</label>
+                <!-- Hidden Product ID for Update  -->
+                <input type="hidden" name="product_id" class="product_id" value="<?= $product_row['product_id'];?>">
+                <input type="text" class="form-control product_title" name="product_title" value="<?= $product_row['product_title'];?>" placeholder="Product Title"
+                    requried />
+            </div>
+            <div class="row mb-3">
+            <div class="col-md-4">
+        <select name="product_cat" id="category" class="form-select product_category">
+            <?php
+          
+            $db->select('categories','*',null,null,null,null);
+            $cat_result = $db->getResult();
+            ?>
+            <option value="" selected disabled>
+                Choose One Category
+            </option>
+            <?php
+            if(count($cat_result) > 0):
+                foreach($cat_result as $cat_row):
+            ?>
+            <option <?= $cat_row['cat_id']==$product_row['product_cat']?'selected':'' ;?> value="<?= $cat_row['cat_id'];?>"><?= $cat_row['cat_title'];?></option>
+            <?php
+            endforeach;
+            endif;
+            ?>
+        </select>
+            </div>
+
+            <div class="col-md-4">
+            <select name="product_sub_cat" id="product_sub_cat" class="form-select product_sub_category">
+            <option value="" selected disabled>
+            Choose One Sub-Categroy
+           </option>
+                <?php
+                $db->select('sub_categories','*',null,null,null,null);
+                $sub_cat_res = $db->getResult();
+                if(count($sub_cat_res) > 0):
+                    foreach ($sub_cat_res as $sub_cat_row):
+                ?>
+           <option <?= $sub_cat_row['sub_cat_id'] == $product_row['product_sub_cat']? 'selected':'';?> value="<?= $sub_cat_row['sub_cat_id'];?>"> <?= $sub_cat_row['sub_cat_title'];?></option>
+        <?php
+        endforeach;
+    endif;
+        ?>
+        </select>
+
+            </div>
+
+            <div class="col-md-4">
+            <select name="product_brand" class="form-select product_brands" id="">
+            <option value="" selected disabled>
+            Choose One Brand
+            </option>
+            <?php
+            $db->select('brands','*',null,null,null,null);
+            $brand_result = $db->getResult();
+            if(count($brand_result) > 0){
+                foreach($brand_result as $brand_row):
+            ?>
+             <option <?= $brand_row['brand_id'] == $product_row['product_brand']? 'selected':'';?> value="<?= $brand_row['brand_id'];?>"> <?= $brand_row['brand_title'];?></option>
+             <?php
+             endforeach;
+            }
+            else {
+             ?>
+             <option value=""> No Brand is available</option>
+              <?php
+            }
+
+              ?>    
+    </select>
+
+            </div>
+           
+            <div class="form-group">
+                    <label >Product Description</label>
+                    <textarea class="form-control product_description" name="product_desc"  rows="8" cols="80" requried><?= $product_row['product_desc'];?></textarea>
+                </div>
+                <div class="show-error"></div>
+            
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="">Featured Image</label>
+                <input type="file" class="form-control product_image" requried name="new_image" onchange="thunmbnail_Url(this)">
+
+                <!-- Hidden Image For Change  -->
+                <input type="hidden" name="old_image" value="<?= $product_row['featured_image'];?>">
+
+                <img id="image" src="./../product_images/<?= $product_row['featured_image'];?>" width="100px" class="mb-2" height="80px" alt="product old image">
+            </div>
+            <div class="form-group">
+                <label for="">Product Price</label>
+                <input type="text" value="<?= $product_row['product_price'];?>" class="form-control product_price" name="product_price" requried>
+            </div>
+            <div class="form-group">
+                <label for="">Available Quantity</label>
+                <input type="number" class="form-control product_qty" name="product_qty" requried value="<?= $product_row['qty'];?>">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select class="form-control  form-select product_status" name="product_status">
+                    <option <?= $product_row['product_status'] == 1 ? 'selected':'';?> value="1">Publish</option>
+                    <option <?= $product_row['product_status'] == 0 ? 'selected':'';?> value="0">Draft</option>
+                </select>
+            </div>
+
+            <div>
+                <input style="background-color: #e93700;font-size: 18px;" type="submit"
+                    class="btn mt-2 text-white add-new" name="submit" value="Submit">
+            </div>
+        </div>
+        <?php
+        endforeach;
+    endif;
+        ?>
+    </form>
+
+<?php
+include 'footer.php';
+?>

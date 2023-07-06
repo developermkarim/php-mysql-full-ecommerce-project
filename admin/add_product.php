@@ -3,7 +3,6 @@ include_once './header.php';
 ?>
 
 <div class="main" id="main">
-
     <h2 class="admin-heading">Add New Product</h2>
     <form id="createProduct" class="add-post-form row" method="post" enctype="multipart/form-data">
         <div class="col-md-9">
@@ -64,8 +63,8 @@ include_once './header.php';
         <div class="col-md-3">
             <div class="form-group">
                 <label for="">Featured Image</label>
-                <input type="file" class="product_image" requried name="featured_img">
-                <img id="image" src="" width="150px" />
+                <input type="file" class="form-control product_image" id="featured_img" name="featured_img" onchange="thunmbnail_Url(this)">
+                <img id="image" src="" />
             </div>
             <div class="form-group">
                 <label for="">Product Price</label>
@@ -77,7 +76,7 @@ include_once './header.php';
             </div>
             <div class="form-group">
                 <label>Status</label>
-                <select class="form-control product_status" name="product_status">
+                <select class="form-control form-select product_status" name="product_status">
                     <option selected value="1">Publish</option>
                     <option value="0">Draft</option>
                 </select>
@@ -91,4 +90,6 @@ include_once './header.php';
     </form>
 
 </div 
-<?php include 'footer.php' ?>
+<?php include 'footer.php'
+?>
+

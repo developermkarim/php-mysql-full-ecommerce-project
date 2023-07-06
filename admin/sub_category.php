@@ -4,7 +4,7 @@ include_once './header.php';
 <main id="main" class="main">
     <div class="admin-content-container">
         <div class="d-flex justify-content-around">
-            <h2 class="admin-heading">All Categories</h2>
+            <h2 class="admin-heading">All Sub Categories</h2>
             <a class="add-new btn btn-danger" href="add_sub_category.php"> Add New </a>
         </div>
 
@@ -79,7 +79,7 @@ include_once './header.php';
                             </td>
                             <td>
                                 <a class="text-primary" href="edit_sub_category.php?id=<?= $row['sub_cat_id']; ?>"><i class="fas fa-edit"></i></a> &nbsp;
-                                <a class="delete_sub_category text-danger" href="javascript:void()" data-id="<?= $row['sub_cat_id']; ?>">
+                                <a class="delete_sub_cat text-danger" href="javascript:void();" data-id="<?= $row['sub_cat_id']; ?>">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>

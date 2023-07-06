@@ -44,7 +44,8 @@ if(!session_id()){
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/92d6c198cd.js" crossorigin="anonymous"></script>
-  
+  <!-- Text Editor -->
+  <link rel="stylesheet" href="css/jquery-te-1.4.0.css">
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 
@@ -364,12 +365,12 @@ if(!session_id()){
            <!-- Manage Users List Start -->
 
              <!-- Manage Brands List Start -->
-      <li class="nav-item">
+    <!--   <li class="nav-item">
       <a class="<?= basename($_SERVER['PHP_SELF']) == 'brands.php' ? 'nav-link':'nav-link collapsed' ?>" href="brands.php">
           <i class="bi bi-grid"></i>
           <span>Manage Brands</span>
         </a>
-      </li>
+      </li> -->
            <!-- Manage Brands List Start -->
 
              <!-- Manage Option List Start -->
@@ -418,12 +419,12 @@ if(!session_id()){
           </li>
           <li>
             <a href="forms-validation.html">
-              <i class="bi bi-circle"></i><span>Form Validation</span>
+            <i class="bi bi-circle"></i><span>Form Validation</span>
             </a>
           </li>
         </ul>
-      </li><!-- End Forms Nav -->
- -->
+      </li> End Forms Nav -->
+ 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>

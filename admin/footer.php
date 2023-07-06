@@ -30,8 +30,32 @@
   <!-- Template Main JS File -->
   <script src="js/jquery.min.js"></script>
 <script src="./../js/fontawesome.js"></script>
+<!-- Text Editor JS File -->
+<script src="js/jquery-te-1.4.0.min.js"></script>
+<script>
+            $('.product_description').jqte({
+                link: false,
+                unlink: false,
+                color: false,
+                source: false,
+            });
+
+     
+        </script>
 <script src="js/admin_actions.js"></script>
 
+<script>
+/* Thumbnail Image live Show Here */
+   function thunmbnail_Url(input){
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e){
+        $('#image').attr('src',e.target.result).width(80).height(80);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+    };
+</script>
 </body>
 
 </html>

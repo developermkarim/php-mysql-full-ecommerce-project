@@ -27,9 +27,9 @@ if(count($result) > 0){
 
   <input type="hidden" id="sub_cat_id" name="sub_cat_id" value="<?= $result['sub_cat_id'];?>">
 
-  <input type="text" name="update_sub_category_name" value="<?= $result['sub_cat_title'] ;?>" class="form-control" id="update_sub_category_name">
+  <input type="text" name="sub_category_name" value="<?= $result['sub_cat_title'] ;?>" class="form-control" id="update_sub_category_name">
 
-  <select name="update_category_name" id="update_category_name">
+  <select class="form-select mt-2" name="parent_sub_cat" id="update_category_name">
 <option selected value="">Select Sub-Cateogry</option>
   <?php
   foreach($cat_results as $key => $cat_result):

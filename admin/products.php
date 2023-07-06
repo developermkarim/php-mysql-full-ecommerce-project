@@ -74,17 +74,15 @@ include_once './header.php';
                         echo 'Inactive';
                         elseif($value['product_status'] == 1)
                         echo 'active';
-
-                
                         ?>
                         </span>
                     </td>
 
                     <td>
-                        <a class="text-primary" href="edit_product.php?id=<?php $value['product_id'] ?>"><i
+                        <a class="text-primary" href="edit_product.php?product_id=<?= $value['product_id'] ?>"><i
                                 class="fas fa-edit"></i></a> &nbsp;
-                        <a class="delete_product text-danger" href="javascript:void()" data-id="<?php ?>"
-                            data-subcat="<?php  ?>"><i class="fas fa-trash"></i></a>
+                        <a class="delete_product text-danger" href="javascript:void();" data-id="<?= $value['product_id'];?>" data-subcat="<?= $value['product_sub_cat'];?>"
+                ><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
 
