@@ -25,19 +25,20 @@ include 'header.php';
             <div class="row mb-3">
             <div class="col-md-4">
         <select name="product_cat" id="category" class="form-select product_category">
-            <?php
-          
-            $db->select('categories','*',null,null,null,null);
-            $cat_result = $db->getResult();
-            ?>
+           
             <option value="" selected disabled>
                 Choose One Category
             </option>
             <?php
+            $db = new Database;
+            $db->select('categories','*',null,null,null,null);
+            $cat_result = $db->getResult();
             if(count($cat_result) > 0):
                 foreach($cat_result as $cat_row):
             ?>
-            <option <?= $cat_row['cat_id']==$product_row['product_cat']?'selected':'' ;?> value="<?= $cat_row['cat_id'];?>"><?= $cat_row['cat_title'];?></option>
+            <option <?= $cat_row['cat_id'] == $product_row['product_cat'] ? 'selected' : '' ;?> value="<?= $cat_row['cat_id'];?>">
+            <?= $cat_row['cat_title'];?>
+        </option>
             <?php
             endforeach;
             endif;
@@ -56,7 +57,7 @@ include 'header.php';
                 if(count($sub_cat_res) > 0):
                     foreach ($sub_cat_res as $sub_cat_row):
                 ?>
-           <option <?= $sub_cat_row['sub_cat_id'] == $product_row['product_sub_cat']? 'selected':'';?> value="<?= $sub_cat_row['sub_cat_id'];?>"> <?= $sub_cat_row['sub_cat_title'];?></option>
+           <option <?= $sub_cat_row['sub_cat_id'] == $product_row['product_sub_cat']? 'selected':'';?> value="<?= $sub_cat_row['sub_cat_id'];?>"> <?= $sub_cat_row['sub_cat_title'];?> </option>
         <?php
         endforeach;
     endif;
@@ -82,7 +83,9 @@ include 'header.php';
             }
             else {
              ?>
+
              <option value=""> No Brand is available</option>
+              
               <?php
             }
 
@@ -107,12 +110,28 @@ include 'header.php';
                 <!-- Hidden Image For Change  -->
                 <input type="hidden" name="old_image" value="<?= $product_row['featured_image'];?>">
 
-                <img id="image" src="./../product_images/<?= $product_row['featured_image'];?>" width="100px" class="mb-2" height="80px" alt="product old image">
+                <img id="image" src="./../admin/product_images/<?= $product_row['featured_image'];?>" width="100px" class="mb-2" height="80px" alt="product old image">
             </div>
             <div class="form-group">
                 <label for="">Product Price</label>
                 <input type="text" value="<?= $product_row['product_price'];?>" class="form-control product_price" name="product_price" requried>
             </div>
+
+            <div class="form-group align-middle my-3">
+             
+            <?php
+// Assuming $productData is your array containing product data
+$featuredProductValue = isset($product_row['featured_product']) ? 1 : 0;
+?>
+             <div class="form-check form-check-inline">
+             <label class="form-check-label" for="inlineCheckbox1"> Featured Product</label>
+             <input class="form-check-input" name="featured_product" value="<?= isset($product_row['featured_product']) && $product_row['featured_product'] ? 1 : 0; ;?>" 
+             type="checkbox" id="inlineCheckbox1" <?= $product_row['featured_product'] == 1 ? 'checked':'';?>>
+ 
+             </div>
+ 
+             </div>
+
             <div class="form-group">
                 <label for="">Available Quantity</label>
                 <input type="number" class="form-control product_qty" name="product_qty" requried value="<?= $product_row['qty'];?>">

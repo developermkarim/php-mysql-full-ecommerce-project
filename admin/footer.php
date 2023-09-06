@@ -11,6 +11,7 @@
       <!-- You can delete the links only if you purchased the pro version. -->
       <!-- Licensing information: https://bootstrapmade.com/license/ -->
       <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+        
       Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
     </div>
   </footer><!-- End Footer -->
@@ -23,15 +24,21 @@
   <script src="assets/vendor/chart.js/chart.min.js"></script>
   <script src="assets/vendor/echarts/echarts.min.js"></script>
   <script src="assets/vendor/quill/quill.min.js"></script>
-  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+
+<!--   <script src="assets/vendor/simple-datatables/simple-datatables.js"></script> -->
+
+
+
   <script src="assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="js/jquery.min.js"></script>
-<script src="./../js/fontawesome.js"></script>
+  <script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/fontawesome.js"></script>
+
 <!-- Text Editor JS File -->
-<script src="js/jquery-te-1.4.0.min.js"></script>
+
+<script src="assets/js/jquery-te-1.4.0.min.js"></script>
 <script>
             $('.product_description').jqte({
                 link: false,
@@ -40,9 +47,8 @@
                 source: false,
             });
 
-     
         </script>
-<script src="js/admin_actions.js"></script>
+<script src="assets/js/admin_actions.js"></script>
 
 <script>
 /* Thumbnail Image live Show Here */
@@ -55,6 +61,39 @@
       reader.readAsDataURL(input.files[0]);
     }
     };
+
+  
+
+</script>
+<!-- Include DataTables JS -->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#productTable').DataTable({
+        pageLength: 10, // Number of records per page
+        searching: true, // Enable search functionality
+        ordering: true, // Enable sorting
+        // More options...
+    });
+});
+
+</script>
+<script>
+  function printTable() {
+    var contentToPrint = document.getElementById('reportTable').outerHTML;
+
+    var printWindow = window.open('', '_blank');
+    printWindow.document.open();
+    printWindow.document.write('<html><head><title>Print Table</title></head><body>');
+    printWindow.document.write(contentToPrint);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+
+    printWindow.print();
+    printWindow.close();
+}
+
 </script>
 </body>
 

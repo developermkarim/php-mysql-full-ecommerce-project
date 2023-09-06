@@ -3,14 +3,14 @@ include_once './header.php';
 ?>
 <main id="main" class="main">
     <div class="admin-content-container">
-        <div class="d-flex justify-content-around">
+        <div class="d-flex justify-content-around mb-5">
             <h2 class="admin-heading">All Products</h2>
             <a class="add-new btn btn-danger" href="add_product.php">Add New</a>
         </div>
 
         <?php
     $limit = 10;
-      $db->select('products','products.product_id,products.product_code,products.product_price,products.product_status,products.qty,products.featured_image,products.product_cat,products.product_sub_cat,products.product_brand,products.product_title,sub_categories.sub_cat_title,brands.brand_id,brands.brand_title','sub_categories ON products.product_sub_cat = sub_categories.sub_cat_id LEFT JOIN brands ON products.product_brand=brands.brand_id',null,'products.product_id DESC',$limit);
+      $db->select('products','products.product_id,products.product_code,products.product_price,products.product_status,products.qty,products.featured_image,products.featured_product,products.product_cat,products.product_sub_cat,products.product_brand,products.product_title,sub_categories.sub_cat_title,brands.brand_id,brands.brand_title','sub_categories ON products.product_sub_cat = sub_categories.sub_cat_id LEFT JOIN brands ON products.product_brand=brands.brand_id',null,'products.product_id DESC',$limit);
 
       $result = $db->getResult();
 
@@ -19,7 +19,7 @@ include_once './header.php';
     ?>
 
 
-        <table id="productsTable" class="table table-striped table-hover table-bordered">
+        <table id="productsTable" class="table table-striped table-hover table-bordered display">
             <thead>
                 <th>S/L</th>
                 <th>Title</th>
@@ -27,6 +27,7 @@ include_once './header.php';
                 <th>Brand</th>
                 <th>Price</th>
                 <th>Quantity</th>
+                <th>Featured Products</th>
                 <th>Image</th>
                 <th>Status</th>
                 <th width="100px">Action</th>
@@ -46,11 +47,27 @@ include_once './header.php';
                     <td><?= $value['brand_title']  ?></td>
                     <td><?= $value['product_price']  ?></td>
                     <td><?= $value['qty']  ?></td>
+
+                    <td>
+                        <?php
+                        if ($value['featured_product'] == 1){
+                        ?>
+                        <input type="checkbox" class="form-check-input toggle-checkbox featured_product" data-id="<?= $value['product_id'];?>" checked>
+
+                        <?php
+                       } else{
+                        ?>
+                        <input type="checkbox" class="form-check-input toggle-checkbox featured_product" data-id="<?= $value['product_id'];?>" >
+                        <?php
+                       }
+                        ?>
+                    </td>
+
                     <td>
                         <?php
                             if($value['featured_image'] != ""){
                             ?>
-                        <img src="./../product_images/<?= $value['featured_image'];?>"
+                        <img src="./../admin/product_images/<?= $value['featured_image'];?>"
                             alt="<?= $value['product_title']  ?>" width="50" height="50">
 
                         <?php

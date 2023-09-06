@@ -57,9 +57,7 @@ if(isset($_POST['cat_id'])){
         echo json_encode(array('error'=>'product_status  must be filled'));
         exit;
     }
-    elseif(!isset($_FILES['featured_img']['name']) || empty($_FILES['featured_img']['name'])){
-		echo json_encode(array('error'=>'Image Field is Empty.')); exit;
-    }
+   
     else{
 
     $file_name = $_FILES['featured_img']['name'];
@@ -109,7 +107,8 @@ $errors[] = '<div class="alert alert-danger" role="alert">Only jpg, png,jpeg and
     'product_desc' => $db->escapeString($_POST['product_desc']),
     'product_price' => $db->escapeString($_POST['product_price']),
     'qty' => $db->escapeString($_POST['product_qty']),
-    'product_status' => $db->escapeString($_POST['product_status'])
+    'product_status' => $db->escapeString($_POST['product_status']),
+    'featured_product'=>$db->escapeString($_POST['featured_product']),
 
    ];
 
@@ -130,7 +129,7 @@ else{
    $result = $db->getResult();
   
    if(!empty($result)){
-    move_uploaded_file($file_temp,"../../product_images/".$latest_file);
+    move_uploaded_file($file_temp,"../product_images/".$latest_file);
     echo json_encode(array('success'=>$result));
    
 exit;
@@ -141,10 +140,9 @@ exit;
     }
 
   }
-}
-;
+};
 /* Update Product Here */
- if (isset($_POST['update'])) {
+ if (isset($_POST['update'])){
      if (!isset($_POST['product_id']) || empty($_POST['product_id'])) {
         echo json_encode(array('error'=>'Product ID is Empty'));exit;
     }elseif(!isset($_POST['product_title']) || empty($_POST['product_title'])){
@@ -236,7 +234,8 @@ exit;
         		'product_desc' => $db->escapeString($_POST['product_desc']),
         		'product_price' => $db->escapeString($_POST['product_price']),
                 'qty' => $db->escapeString($_POST['product_qty']),
-        		'product_status' => $db->escapeString($_POST['product_status'])
+        		'product_status' => $db->escapeString($_POST['product_status']),
+                'featured_product'=>$db->escapeString($_POST['featured_product']),
             ];
 
             $db->update('products',$params,"product_id='{$_POST['product_id']}'");
@@ -244,7 +243,7 @@ exit;
             if(!empty($isUpdated)){
 
                 if (!empty($_FILES['new_image']['name'])){
-                    move_uploaded_file($file_temp,"../../product_images/" . $file_name); 
+                    move_uploaded_file($file_temp,"../product_images/" . $file_name); 
                 }
                 echo json_encode(array('success'=>$isUpdated[0]));exit;
             }
@@ -269,3 +268,18 @@ exit;
         echo json_encode(array('error'=>"SOrry! Something Went wrong ,Product is not deleted"));
      }
     }
+
+
+     if (isset($_POST['product_id']) && !empty($_POST['product_id'])) {
+        $db = new Database;
+
+        $status = $db->escapeString($_POST['status']);
+        $product_id = $db->escapeString($_POST['product_id']);
+        $db->update('products',array('featured_product'=>$status),"product_id={$product_id}");
+
+        $result = $db->getResult();
+
+        if(!empty($result)){
+            echo "true";
+        }
+      }

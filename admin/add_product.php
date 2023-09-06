@@ -70,6 +70,18 @@ include_once './header.php';
                 <label for="">Product Price</label>
                 <input type="text" class="form-control product_price" name="product_price" requried value="">
             </div>
+
+            <div class="form-group align-middle my-3">
+             
+             
+            <div class="form-check form-check-inline">
+            <label class="form-check-label" for="inlineCheckbox1"> Featured Product</label>
+            <input class="form-check-input" name="featured_product" value="<?="checked" ? '1':'0';?>" type="checkbox" id="inlineCheckbox1">
+
+            </div>
+
+            </div>
+
             <div class="form-group">
                 <label for="">Available Quantity</label>
                 <input type="number" class="form-control product_qty" name="product_qty" requried value="">

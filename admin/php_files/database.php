@@ -9,6 +9,7 @@ private $mysqli = ""; // This will be our mysqli object
 private $myquery = "";// used for debugging process with SQL return
 private $conn = false;
 public function __construct(){
+
     if(!$this->conn){
 
         $this->mysqli = new mysqli($this->db_host,$this->db_user,$this->db_pass,$this->db_name);
@@ -33,7 +34,7 @@ public function __construct(){
             $sql = "INSERT INTO $table($table_columns) VALUES('$table_values')";
             $this->myquery = $sql;
 
-            if ($this->mysqli->query($this->myquery)) {
+            if($this->mysqli->query($this->myquery)){
                 array_push($this->result,$this->mysqli->insert_id); // First is array,2nd is value
                return true;
             }else{
@@ -161,6 +162,7 @@ if ($query) {
 }
 
 //  value store in this->result based on SQL command
+
 public function sql($sql)
 {
   $this->myquery = $sql;
@@ -181,6 +183,7 @@ public function sql($sql)
                 case 'SELECT':
                 array_push($this->result,$query->fetch_all(MYSQLI_ASSOC));
         }
+        
         return true;
   }
   

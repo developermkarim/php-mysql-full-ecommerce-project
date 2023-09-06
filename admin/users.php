@@ -44,10 +44,28 @@ include_once './header.php';
                     <!-- Show User Info -->
 
                     <!-- Small Modal -->
-              <a href="" class="btn btn-sm btn-primary user_view" data-bs-toggle="modal" data-id="<?= $row['user_id'];?>" data-bs-target="#user-detail">
+              <a href="" class="btn btn-sm btn-primary user_view" data-bs-toggle="modal" data-id="<?= $row['user_id'];?>" data-bs-target="#user-detail<?= $row['user_id'];?>">
                <i class="fas fa-eye"></i>
               </a>
                    
+   <div class="modal fade" id="user-detail" tabindex="-1">
+                <div class="modal-dialog modal-sm">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Small Modal</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                   
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             
 
               <!-- Block Unblock Here -->
 
@@ -83,7 +101,7 @@ include_once './header.php';
 
 
    <!-- User Modal Description Here -->
-   <div class="modal fade" id="user-detail" tabindex="-1">
+   <div class="modal fade" id="user-detailtrt" tabindex="-1">
                 <div class="modal-dialog modal-sm">
                   <div class="modal-content">
                     <div class="modal-header">

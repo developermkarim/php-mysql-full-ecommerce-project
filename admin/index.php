@@ -35,7 +35,7 @@ if (isset($_SESSION['adminName'])) {
 
 <!-- <link rel="stylesheet" href="./../css/bootstrap.min.css">
 <link rel="stylesheet" href="./../css/fontawesome.css"> -->
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -129,8 +129,8 @@ if (isset($_SESSION['adminName'])) {
 <script src="assets/vendor/php-email-form/validate.js"></script>
 
 <!-- all js files here -->
-<script src="js/jquery.min.js"></script>
+<script src="assets/js/jquery.min.js"></script>
 <script src="./../js/fontawesome.js"></script>
-<script src="js/admin_actions.js"></script>
+<script src="assets/js/admin_actions.js"></script>
 </body>
 </html>

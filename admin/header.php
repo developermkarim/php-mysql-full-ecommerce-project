@@ -42,10 +42,15 @@ if(!session_id()){
   <link href="assets/vendor/quill/quill.snow.css" rel="stylesheet">
   <link href="assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+<!--   <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet"> -->
+
+
+<!-- Include DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
   <script src="https://kit.fontawesome.com/92d6c198cd.js" crossorigin="anonymous"></script>
   <!-- Text Editor -->
-  <link rel="stylesheet" href="css/jquery-te-1.4.0.css">
+  <link rel="stylesheet" href="assets/css/jquery-te-1.4.0.css">
   <!-- Template Main CSS File -->
   <link href="assets/css/style.css" rel="stylesheet">
 
@@ -382,7 +387,14 @@ if(!session_id()){
       </li>
            <!-- Manage Option List Start -->
       
-      
+                   <!-- Manage Report List Start -->
+                   <li class="nav-item">
+      <a class="<?= basename($_SERVER['PHP_SELF'] == 'reports.php' ? 'nav-link':'nav-link collapsed');?>nav-link collapsed" href="reports.php">
+          <i class="bi bi-grid"></i>
+          <span>Manage Reports</span>
+        </a>
+      </li>
+           <!-- Manage Report List Start -->
       
       
       
