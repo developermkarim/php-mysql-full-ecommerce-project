@@ -839,4 +839,152 @@ $('#reportSection').submit(function(e){
         }
     })
 })
+
+
+/* Coupon Handle Here in admin */
+$('.coupon-box').click(function(){
+    var coupon_id = $(this).attr('data-coupon-id');
+    // var status = $(this).attr('data-status');
+
+    var status = '';
+    if($(this).prop('checked') == true){
+        status = '1';
+    }else if($(this).prop('checked') == false){
+        status = '0';
+    }
+ 
+    $.ajax({
+        url:'./php_files/coupon.php',
+        method:'POST',
+        data:{coupon_id:coupon_id,coupon_status:status},
+        success:function(response){
+            // console.log(response);
+        }
+    })
+
+})
+
+
+/* Coupon add Here */
+
+$('#add_coupon_form').submit(function(ev){
+    ev.preventDefault();
+    $('.alert').hide();
+    var title = $('#coupon_title').val();
+    var code = $('#coupon_code').val();
+    var value = $('#coupon_value').val();
+    var status = $('.status option:selected').val();
+    console.log(status);
+    if(title.trim() == ''){
+            $('#add_coupon_form').prepend('<div class="alert alert-danger">Coupon Tile Field is Empty.</div>');
+     }else if(code.trim() == ''){
+            $('#add_coupon_form').prepend('<div class="alert alert-danger">Coupon Code Field is Empty.</div>');
+        }else if(value.trim() == ''){
+            $('#add_coupon_form').prepend('<div class="alert alert-danger">Coupon Value Field is Empty.</div>');
+        }else if(status == ''){
+            $('#add_coupon_form').prepend('<div class="alert alert-danger">Status is not selected.</div>');
+        }else{
+
+            var couponForm = new FormData(this);
+            couponForm.append('create','1');
+            $.ajax({
+                url:'./php_files/coupon.php',
+                method:"POST",
+                data:couponForm,
+                processData:false,
+                contentType:false,
+                dataType:'json',
+                success:function(response) {
+                    $('.alert').hide();
+                    console.log(response);
+                    if (response.hasOwnProperty('success')) {
+                        $('#add_coupon_form').append(`<div class="alert alert-success">${response.success}.</div>`);
+                        setTimeout(() => {
+                            window.location = URL + '/../admin/coupon.php'
+                        }, 1000);
+                    }else if(response.hasOwnProperty('error')){
+                        $('#add_coupon_form').append(`<div class="alert alert-danger">${response.error}</div>`)
+                    }
+                }
+            })
+        }
+})
+
+/* Edit Coupon Here */
+
+$('#edit_coupon_form').submit(function(ev){
+    ev.preventDefault();
+    $('.alert').hide();
+    var title = $('#coupon_title').val();
+    var code = $('#coupon_code').val();
+    var value = $('#coupon_value').val();
+    var status = $('.status option:selected').val();
+    // console.log(status);
+    if(title.trim() == ''){
+            $('#edit_coupon_form').prepend('<div class="alert alert-danger">Coupon Tile Field is Empty.</div>');
+     }else if(code.trim() == ''){
+            $('#edit_coupon_form').prepend('<div class="alert alert-danger">Coupon Code Field is Empty.</div>');
+        }else if(value.trim() == ''){
+            $('#edit_coupon_form').prepend('<div class="alert alert-danger">Coupon Value Field is Empty.</div>');
+        }else if(status == ''){
+            $('#edit_coupon_form').prepend('<div class="alert alert-danger">Status is not selected.</div>');
+        }else{
+
+            var couponForm = new FormData(this);
+            couponForm.append('update','1');
+            $.ajax({
+                url:'./php_files/coupon.php',
+                method:"POST",
+                data:couponForm,
+                processData:false,
+                contentType:false,
+                dataType:'json',
+                success:function(response) {
+                    $('.alert').hide();
+                    console.log(response);
+                    if (response.hasOwnProperty('success')) {
+                        $('#edit_coupon_form').append(`<div class="alert alert-success">${response.success}.</div>`);
+                        setTimeout(() => {
+                            window.location = URL + '/../admin/coupon.php'
+                        }, 1000);
+                    }else if(response.hasOwnProperty('error')){
+                        $('#edit_coupon_form').append(`<div class="alert alert-danger">${response.error}</div>`)
+                    }
+                }
+            })
+        }
+
+})
+
+$('.delete_coupon').click(function(ev){
+    ev.preventDefault()
+     var tr = $(this).closest('tr');
+    // var tr = $(this);
+    var coupon_id = $(this).data('id');
+
+    if(confirm('Are you Sure Want To delete Coupon')){
+        $.ajax({
+            url:'php_files/coupon.php',
+            method:"POST",
+            data:{delete_coupon:'1',id:coupon_id},
+            // dataType:'json',
+            success:function(response){
+                console.log(response);
+                if(response.hasOwnProperty('success')){
+                    // tr.remove();
+                    // tr.parent().parent('tr').remove();
+                    // $('.coupon-data').prepend(`<div class="alert alert-success">${response.success}.</div>`);
+                }else if(response.hasOwnProperty('error')){
+                    $('.coupon-data').prepend(`<div class="alert alert-danger">${response.error}.</div>`);
+                }
+
+            },
+            error: function() {
+                alert("Error occurred while deleting the record.");
+            }
+
+        })
+    }
+})
+
 });

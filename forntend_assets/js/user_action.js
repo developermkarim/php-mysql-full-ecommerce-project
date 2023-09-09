@@ -351,11 +351,25 @@ $(document).ready(function(){
 
                     var responseCount = response.newQuantity;
                     var totalPrice = response.total_price;
+                    var rowCount = response.rowCount;
+                   /*  var subTotal = response.subTotal; */
                     // Example: Update quantity input value
                     quantityInput.val(responseCount);
 
                     // Example: Update cart total
                     cartTotal.text(totalPrice);
+
+                    // Sub Total of all Carts
+                    $('#sub-total').text(response.subTotal);
+
+                    /* Delivery Charge Here */
+                    var delivery_charge = 69;
+                    var qtyWiseCharge = rowCount * delivery_charge;
+                    $('#delivery-charge').text(qtyWiseCharge);
+
+                    /* Total Of all Carts and QUantity after coupon and delivery charge added */
+                    var finalTotal = qtyWiseCharge + parseInt(response.subTotal);
+                    $('#total').text(finalTotal);
 
                 }
             }
@@ -387,11 +401,23 @@ $(document).ready(function(){
 
                 if(response.hasOwnProperty('success')){
 
-                    var responseCount = response.newQuantity;
-                    var totalPrice = response.total_price;
+                    var responseCount = parseInt(response.newQuantity);
+                    var totalPrice = parseInt(response.total_price);
+                    var rowCount = response.rowCount;
 
                   cartTotal.text(totalPrice);
                    quantityInput.val(responseCount);
+                // Sub Total of all Carts
+                $('#sub-total').text(response.subTotal);
+
+                /* Delivery Charge Here */
+                var delivery_charge = 69;
+                var qtyWiseCharge = rowCount * delivery_charge;
+                $('#delivery-charge').text(qtyWiseCharge);
+
+                /* Total Of all Carts and QUantity after coupon and delivery charge added */
+                var finalTotal = qtyWiseCharge + parseInt(response.subTotal);
+                $('#total').text(finalTotal);
 
                 }else if (response.hasOwnProperty('error')) {
 
@@ -416,7 +442,8 @@ $(document).ready(function(){
         var cart_price = $(this).data('cart-price');
         console.log(countValue);
         console.log(cart_id);
-    //    var countValue =  countValue < 0 ? 0 : countValue;
+        // var countValue =  /^\d+$/.test(inputValue);
+        // var countValue = inputValue;
 
        if(countValue < 1){
         $('#ErrorMessageText').text('Count Value Must be above 1');
@@ -430,7 +457,7 @@ $(document).ready(function(){
             $('.count-value').val(1);
         }, 1000);
         return true;
-         }else if(!Number.isNaN(countValue)){
+         }  else if(!/^\d+$/.test(countValue)){
             $('#ErrorMessageText').text('Tying to give String Value to Number');
             $('#ErrorMessageModal').modal('show');
     
@@ -441,9 +468,8 @@ $(document).ready(function(){
                 $('.count-value').val(1);
             }, 1000);
             return true;
-         }
+         }  
      
-
         $.ajax({
             url:"php_files/user_action.php",
             method:"POST",
@@ -455,8 +481,24 @@ $(document).ready(function(){
                 if(response.hasOwnProperty('success')){
 
                     var totalPrice = response.total_price;
+                    var responseCount = response.newQuantity;
+                    var rowCount = response.rowCount;
+                    
 
                   $('.shoping__cart__total').text(totalPrice);
+
+                  // Sub Total of all Carts
+                $('#sub-total').text(response.subTotal);
+
+                /* Delivery Charge Here */
+                var delivery_charge = 69;
+                var qtyWiseCharge = rowCount * delivery_charge;
+                $('#delivery-charge').text(qtyWiseCharge);
+
+                /* Total Of all Carts and QUantity after coupon and delivery charge added */
+                var finalTotal = qtyWiseCharge + parseInt(response.subTotal);
+                $('#total').text(finalTotal);
+
                 }
                 else if(response.hasOwnProperty('error')){
                     var errorMsg = response.error;
@@ -470,6 +512,86 @@ $(document).ready(function(){
 
         })
 
+    })
+
+    /* User Coupon Apply Here */
+
+    $('#apply-coupon').submit(function(e){
+        e.preventDefault();
+        $('.text-msg').hide()
+        var coupon_code = $('#coupon-code').val();
+         var hidden_code = $('#hidden_code').val();
+        console.log(hidden_code);
+
+        console.log(coupon_code);
+        if (coupon_code.trim() == '') {
+            $('.coupon-title').append(`<p class='text-msg text-danger'>Coupon Code is Empty</p>`)
+        }
+        else if(hidden_code.trim() == ''){
+            $('.coupon-title').append(`<p class='text-msg text-danger'>Hidden Code is Empty</p>`)
+        }
+
+        else{
+            // var form = $(this);
+            var couponForm = new FormData(this);
+            couponForm.append('applied','1');
+            console.log(couponForm);
+              var applyCouponBtn =    $('apply-coupon-btn');
+              
+        // Add a loading spinner to the button
+        applyCouponBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+
+            $.ajax({
+                url:'php_files/user_action.php',
+                method:"POST",
+                processData:false,
+                contentType:false,
+                data:couponForm,
+                dataType:"json",
+                success:function(response){
+                    $('.text-msg').hide();
+                    console.log(response);
+                    setTimeout(function () {
+                        // Remove the form element
+                        $('#coupon-input-id').empty();
+                    if (response.hasOwnProperty('success')) {
+
+                var rowCount = response.rowCount;
+
+                /* Delivery Charge Here */
+                var coupon_price=0;
+
+                if(rowCount > 1){
+                    coupon_price = response.coupon_price; 
+                }else if(rowCount > 2){
+                    coupon_price = response.gold_coupon;
+                }else if(rowCount > 3){
+                    coupon_price = response.platinum_coupon;
+                }
+
+               var delivery_charge = 69;
+                var qtyWiseCharge = rowCount * delivery_charge
+                // $('#delivery-charge').text(qtyWiseCharge);
+
+                /* Total Of all Carts and QUantity after coupon and delivery charge added */
+                var finalTotal = qtyWiseCharge + parseInt(response.subTotal) - response.coupon_price;
+                $('#total').text(finalTotal);
+                $('#deliver_li').after(`<li>Coupon Charge : <span id="">${coupon_price}</span></li>`)
+                
+                $('#coupon-message').html(`<p class='text-success'><strong>Thanks!</strong> You Have applied Coupon!</p>`);
+
+                }else if(response.hasOwnProperty('error')){
+
+                }
+            },2000)
+
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    displayErrorAlert('An error occurred: ' + errorThrown);
+    
+                }
+            })
+        }
     })
 
 });

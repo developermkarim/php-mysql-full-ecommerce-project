@@ -388,13 +388,22 @@ if(!session_id()){
            <!-- Manage Option List Start -->
       
                    <!-- Manage Report List Start -->
-                   <li class="nav-item">
+        <li class="nav-item">
       <a class="<?= basename($_SERVER['PHP_SELF'] == 'reports.php' ? 'nav-link':'nav-link collapsed');?>nav-link collapsed" href="reports.php">
           <i class="bi bi-grid"></i>
           <span>Manage Reports</span>
         </a>
       </li>
            <!-- Manage Report List Start -->
+
+                   <!-- Manage coupon Here Start -->
+        <li class="nav-item">
+      <a class="<?= basename($_SERVER['PHP_SELF'] == 'coupon.php' ? 'nav-link':'nav-link collapsed');?>nav-link collapsed" href="coupon.php">
+          <i class="bi bi-grid"></i>
+          <span>Manage Coupons</span>
+        </a>
+      </li>
+           <!-- Manage  coupon HereStart -->
       
       
       

@@ -346,7 +346,14 @@ if (!session_id()){
             $newQuantity = $cart_result[0]['quantity'];
             $newPrice  = $cart_result[0]['total_price'];
             
-            echo json_encode(['success'=>'cart increment','newQuantity'=>$newQuantity,'total_price'=>$newPrice]);
+            /* Sub Total Price of all carts with their all qauntities */
+            $db->select('cart','SUM(quantity * price) AS subTotal, COUNT(id) as rowCount',null,"user_id = {$user_id}");
+            $sbTotalRes = $db->getResult();
+            $sub_total  = $sbTotalRes[0]['subTotal'];
+            $rowCount  = $sbTotalRes[0]['rowCount'];
+
+            
+            echo json_encode(['success'=>'cart increment','newQuantity'=>$newQuantity,'total_price'=>$newPrice,'subTotal'=>$sub_total,'rowCount'=>$rowCount]);
 
         }else{
 
@@ -386,7 +393,13 @@ if (!session_id()){
           $newQuantity = $cart_result[0]['quantity'];
           $newPrice  = $cart_result[0]['total_price'];
 
-          echo json_encode(['success'=>'cart increment','newQuantity'=>$newQuantity,'total_price'=>$newPrice]);
+            /* Sub Total Price of all carts with their all qauntities */
+            $db->select('cart','SUM(quantity * price) AS subTotal, COUNT(id) as rowCount',null,"user_id = {$user_id}");
+            $sbTotalRes = $db->getResult();
+            $sub_total  = $sbTotalRes[0]['subTotal'];
+            $rowCount  = $sbTotalRes[0]['rowCount'];
+
+          echo json_encode(['success'=>'cart increment','newQuantity'=>$newQuantity,'total_price'=>$newPrice,'subTotal'=>$sub_total,'rowCount'=>$rowCount]);
 
       }else{
 
@@ -418,7 +431,14 @@ if (!session_id()){
                 $newQuantity = $cart_result[0]['quantity'];
                 $newPrice  = $cart_result[0]['total_price'];
                 
-                echo json_encode(['success'=>'cart increment','newQuantity'=>$newQuantity,'total_price'=>$newPrice]);
+        /* Sub Total Price of all carts with their all qauntities */
+            $db->select('cart','SUM(quantity * price) AS subTotal, COUNT(id) as rowCount',null,"user_id = {$user_id}");
+            $sbTotalRes = $db->getResult();
+            $sub_total  = $sbTotalRes[0]['subTotal'];
+            $rowCount  = $sbTotalRes[0]['rowCount'];
+
+
+                echo json_encode(['success'=>'cart increment','newQuantity'=>$newQuantity,'total_price'=>$newPrice,'subTotal'=>$sub_total,'rowCount'=>$rowCount]);
     
             }else{
     
@@ -426,3 +446,62 @@ if (!session_id()){
             }
 
         }
+         if (isset($_POST['applied'])) {
+
+             if (!isset($_POST['hidden_code']) && empty($_POST['hidden_code'])) {
+                echo json_encode(['error'=>"Sorry You are Not Valid For Coupon"]);exit;
+              }
+              elseif($_POST['hidden_code'] != $_POST['apply_coupon'] || trim($_POST['apply_coupon']) == '') {
+                echo json_encode(['error'=>"Sorry You are Not Valid For Coupon"]);exit;
+              }
+              else {
+                
+              
+
+            $db = new Database;
+            $coupon_code = $db->escapeString($_POST['apply_coupon']);
+            $hidden_code = $db->escapeString($_POST['hidden_code']); // same with the apply_coupon
+
+            $db->select('coupons','value,title,code',null,"code = '{$coupon_code}' AND code = '{$hidden_code}'");
+            $coupon_data = $db->getResult();
+
+            /* Cart Wise Coupon State Here */
+            $user_id = $_SESSION['user_id'];
+            $db->select('cart','COUNT(id) as TotalCart',null,"user_id = $user_id");
+            if(!empty($coupon_data)){
+
+                /* Session Set for Whether session set or not */
+                $_SESSION['coupon-session'] = 'coupon_applied';
+
+                $coupon_price = $coupon_data[0]['value'];
+
+                $_SESSION['coupon-price'] = $coupon_price;
+
+            /* Sub Total Price of all carts with their all qauntities */
+            $db->select('cart','SUM(quantity * price) AS subTotal, COUNT(id) as rowCount',null,"user_id = {$user_id}");
+            $sbTotalRes = $db->getResult();
+            $sub_total  = $sbTotalRes[0]['subTotal'];
+            $rowCount  = $sbTotalRes[0]['rowCount'];
+
+            /* Title Wise Coupon Code For SILVER User */
+            $db->select('coupons','value,title,code',null,"title = 'SILVER'");
+            $silver_coupon = $db->getResult();
+
+            /* Title Wise Coupon Code For GOLD User */
+            $db->select('coupons','value,title,code',null,"title = 'GOLD'");
+            $gold_coupon = $db->getResult();
+
+             /* Title Wise Coupon Code For PLATINUM User */
+            $db->select('coupons','value,title,code',null,"title = 'PLATINUM'");
+            $platinum_coupon = $db->getResult();
+
+            echo json_encode(['success'=>'Coupon Is Successfully applied','subTotal'=>$sub_total,'rowCount'=>$rowCount,'coupon_price'=>$coupon_price,'silver_coupon'=>$silver_coupon[0]['code'],'gold_coupon'=>$gold_coupon,'platinum_coupon'=>$platinum_coupon]);
+
+
+            }else{
+                echo json_encode(['error'=>"Coupon Code not Found"]);
+            }
+
+        }
+
+          }

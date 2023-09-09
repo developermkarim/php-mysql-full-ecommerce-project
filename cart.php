@@ -77,7 +77,7 @@ include './bottom-header.php';
 
                                                 <input data-cart-price="<?= $cart['product_price'] * $cart['quantity'];?>" 
                                                  data-cart-id="<?= $cart['id'];?>" class="count-value" type="text" value="<?=$cart['quantity'];?>">
-                                                
+                                                 
                                                 <i data-cart-id="<?= $cart['id'];?>" class="fa fa-plus increment-count" aria-hidden="true"></i>
                                            </div>
                                         </div>
@@ -107,24 +107,101 @@ include './bottom-header.php';
                             Upadate Cart</a>
                     </div>
                 </div>
+
+                <?php
+                $db = new Database;
+                $db->select('cart','* , count(id) as totalRow, SUM(quantity * price) as subTotal',null,"user_id = {$_SESSION['user_id']}",null,null);
+
+                $cartResult = $db->getResult();
+                $subTotal = $cartResult[0]['subTotal'];
+                $delivery_charge = 69;
+                $allTotal = 0;
+                foreach ($cartResult as $key => $value) {
+                //    $subTotal += $value['quantity'] * $value['price'];
+                   $delivery_charge *= $value['totalRow'];
+                };
+                ?>
                 <div class="col-lg-6">
                     <div class="shoping__continue">
                         <div class="shoping__discount">
-                            <h5>Discount Codes</h5>
-                            <form action="#">
-                                <input type="text" placeholder="Enter your coupon code">
-                                <button type="submit" class="site-btn">APPLY COUPON</button>
+                           
+                        <form id="apply-coupon">
+                            <h5 class="coupon-title">Discount Codes</h5>
+                            <?php
+                            
+                             if (!isset($_SESSION['coupon-session'])) {
+                            ?>
+
+                            <?php
+                            $db->select('coupons','title,code',NULL,'title = "SILVER"');
+                            $coupon = $db->getResult();
+
+                             if ($value['totalRow'] > 1):
+                             ?>
+                            <p>Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
+                            <input type="hidden" value="<?= $coupon[0]['code'];?>" id="hidden_code" name="hidden_code">
+                            
+                            <?php endif; ?>
+
+                            <?php
+                            $db->select('coupons','title,code',NULL,'title = "GOLD"');
+                            $coupon = $db->getResult();
+                            if($value['totalRow'] > 2):
+                            
+                            ?>
+                            <p>Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
+                            <input type="hidden" value="<?= $coupon[0]['code'];?>" id="hidden_code" name="hidden_code">
+                            <?php
+                            endif;
+                            ?>
+
+                            <?php
+                            $db->select('coupons','title,code',NULL,'title = "PLATINUM"');
+                            $coupon = $db->getResult();
+                            if ($value['totalRow'] > 3):
+                            
+                            ?>
+                            <p>Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
+                            <input type="hidden" value="<?= $coupon[0]['code'];?>" id="hidden_code" name="hidden_code">
+                            <?php
+                            endif;
+                            ?>
+                            
+                            <div id="coupon-input-id">
+                                <input type="text" name="apply_coupon" id="coupon-code" placeholder="Enter your coupon code">
+                                <button type="submit" class="site-btn apply-coupon-btn">APPLY COUPON</button>
+                                
+        
+                            </div>
+                            <div id="coupon-message"></div>
+                            <?php
+                             }
+                             else{
+                         echo   "<p class='text-danger'>  <strong>Hey</strong> You Have already applied Coupon!</p>";
+                             }
+                            ?>
                             </form>
+
                         </div>
                     </div>
                 </div>
+
                 <div class="col-lg-6">
                     <div class="shoping__checkout">
                         <h5>Cart Total</h5>
                         <ul>
-                            <li>Subtotal <span>$454.98</span></li>
-                            <li>Total <span>$454.98</span></li>
+                            <li>Subtotal <span id="sub-total">$ <?= $subTotal;?> </span></li>
+                            <li id="deliver_li">delivery Charge <span id="delivery-charge">$ <?= $delivery_charge;?></span></li>
+
+                            <?php if (isset($_SESSION['coupon-price'])):?>
+                                <li>Coupon Charge : <span id=""><?= $_SESSION['coupon-price'];?></span></li>
+
+                                <li>Total <span id="total">$ <?= $subTotal + $delivery_charge - $_SESSION['coupon-price'];?> </span></li>
+                                <?php else: ;?>
+                            <li>Total <span id="total">$ <?= $subTotal + $delivery_charge;?> </span></li>
+                            <?php endif;?>
                         </ul>
+                        
                         <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
                     </div>
                 </div>
