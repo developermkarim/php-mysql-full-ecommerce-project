@@ -27,14 +27,16 @@
                 <div class="col-lg-9">
                     <div class="hero__search">
                         <div class="hero__search__form">
-                            <form action="#">
+
+                            <form id="search-form">
                                 <div class="hero__search__categories">
                                     All Categories
                                     <span class="arrow_carrot-down"></span>
                                 </div>
-                                <input type="text" placeholder="What do yo u need?">
+                                <input type="text" id="search-product" placeholder="What do yo u need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
+
                         </div>
                         <div class="hero__search__phone">
                             <div class="hero__search__phone__icon">
@@ -48,6 +50,9 @@
                     </div>
                 </div>
             </div>
+
+      
+
         </div>
     </section>
     <!-- Hero Section End -->

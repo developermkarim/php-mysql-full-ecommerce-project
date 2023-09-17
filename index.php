@@ -38,7 +38,7 @@ include_once 'header.php';
                                     All Categories
                                     <span class="arrow_carrot-down"></span>
                                 </div>
-                                <input type="text" placeholder="What do yo u need?">
+                                <input type="text" id="search-product" placeholder="What do yo u need?">
                                 <button type="submit" class="site-btn">SEARCH</button>
                             </form>
                         </div>
@@ -60,12 +60,23 @@ include_once 'header.php';
                             <a href="#" class="primary-btn">SHOP NOW</a>
                         </div>
                     </div>
+
+                    <div class="row" style="margin-bottom: 0px" id="search-results-container">
+                <!-- Add a container for displaying search results -->
+
                 </div>
+
+
             </div>
+
+            </div>
+           
         </div>
     </section>
     <!-- Hero Section End -->
 
+
+    
 
 
     <!-- Categories Section Begin -->

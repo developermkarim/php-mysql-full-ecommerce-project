@@ -8,7 +8,7 @@ include './header.php';
 include './bottom-header.php';
 ?>
 
- <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg"          style="background-image: url(&quot;img/breadcrumb.jpg&quot;);">
+ <section class="breadcrumb-section set-bg" data-setbg="forntend_assets/img/breadcrumb.jpg" style="background-image: url(&quot;forntend_assets/img/breadcrumb.jpg&quot;);">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
@@ -114,6 +114,7 @@ include './bottom-header.php';
 
                 $cartResult = $db->getResult();
                 $subTotal = $cartResult[0]['subTotal'];
+                $totalCarts = $cartResult[0]['totalRow'];
                 $delivery_charge = 69;
                 $allTotal = 0;
                 foreach ($cartResult as $key => $value) {
@@ -132,13 +133,15 @@ include './bottom-header.php';
                              if (!isset($_SESSION['coupon-session'])) {
                             ?>
 
+                            <input type="hidden" value="<?= $value['totalRow'];?>" name="userCartCount" id="userCartCount">
+
                             <?php
                             $db->select('coupons','title,code',NULL,'title = "SILVER"');
                             $coupon = $db->getResult();
 
                              if ($value['totalRow'] > 1):
                              ?>
-                            <p>Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
+                            <p class="code-text">Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
                             <input type="hidden" value="<?= $coupon[0]['code'];?>" id="hidden_code" name="hidden_code">
                             
                             <?php endif; ?>
@@ -149,7 +152,7 @@ include './bottom-header.php';
                             if($value['totalRow'] > 2):
                             
                             ?>
-                            <p>Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
+                            <p class="code-text">Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
                             <input type="hidden" value="<?= $coupon[0]['code'];?>" id="hidden_code" name="hidden_code">
                             <?php
                             endif;
@@ -161,7 +164,7 @@ include './bottom-header.php';
                             if ($value['totalRow'] > 3):
                             
                             ?>
-                            <p>Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
+                            <p class="code-text">Coupon Code (<?= $coupon[0]['title'];?>) : <?= $coupon[0]['code'];?></p>
                             <input type="hidden" value="<?= $coupon[0]['code'];?>" id="hidden_code" name="hidden_code">
                             <?php
                             endif;
@@ -176,8 +179,11 @@ include './bottom-header.php';
                             <div id="coupon-message"></div>
                             <?php
                              }
-                             else{
-                         echo   "<p class='text-danger'>  <strong>Hey</strong> You Have already applied Coupon!</p>";
+                             else if($totalCarts <= 1){
+
+                         echo   "<p class='text-danger'>  <strong>Sorry!</strong> You Are Not Eligible for Coupon Price!</p>";
+                             }else {
+                                echo "<p class='text-danger applied-text'>  <strong>Sorry!</strong> You have already Applied this coupon!</p>";
                              }
                             ?>
                             </form>
@@ -186,6 +192,9 @@ include './bottom-header.php';
                     </div>
                 </div>
 
+
+
+
                 <div class="col-lg-6">
                     <div class="shoping__checkout">
                         <h5>Cart Total</h5>
@@ -193,16 +202,30 @@ include './bottom-header.php';
                             <li>Subtotal <span id="sub-total">$ <?= $subTotal;?> </span></li>
                             <li id="deliver_li">delivery Charge <span id="delivery-charge">$ <?= $delivery_charge;?></span></li>
 
-                            <?php if (isset($_SESSION['coupon-price'])):?>
-                                <li>Coupon Charge : <span id=""><?= $_SESSION['coupon-price'];?></span></li>
+                            <?php if (isset($_SESSION['coupon-price']) && $totalCarts > 1):?>
+                                <li id="coupon-charge">Coupon Charge : <span id=""><?= $_SESSION['coupon-price'];?></span></li>
 
                                 <li>Total <span id="total">$ <?= $subTotal + $delivery_charge - $_SESSION['coupon-price'];?> </span></li>
                                 <?php else: ;?>
                             <li>Total <span id="total">$ <?= $subTotal + $delivery_charge;?> </span></li>
                             <?php endif;?>
                         </ul>
-                        
-                        <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+
+                        <?php if (isset($_SESSION['coupon-price']) && $totalCarts > 1):?>
+
+                        <a href="sslecommerz-checkout.php?total=<?= urlencode($subTotal + $delivery_charge - $_SESSION['coupon-price']);?>&subtotal=<?= urlencode($subTotal);?>" class="">Payment With SSLECOMMERZ</a>
+                        <a href="checkout.php?total=<?= urlencode($subTotal + $delivery_charge - $_SESSION['coupon-price']);?>&subtotal=<?= urlencode($subTotal);?>"  class="primary-btn">PROCEED TO CHECKOUT</a>
+
+                        <?php else:  $encoded_total = urlencode($subTotal + $delivery_charge);
+                                      $encoded_subtotal = urlencode($subTotal);?>
+
+                        <a href="sslecommerz-checkout.php?total=<?= $encoded_total;?>&subtotal=<?=$encoded_subtotal ?>" class="">>Payment With SSLECOMMERZ</a>
+
+                        <a href="checkout.php?total=<?= $encoded_total;?>&subtotal=<?=$encoded_subtotal;?>" class="primary-btn">PROCEED TO CHECKOUT</a>
+                        <?php
+                        endif;
+                        ?>
+
                     </div>
                 </div>
             </div>
