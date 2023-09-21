@@ -58,11 +58,18 @@ include_once './header.php';
                 <textarea class="form-control product_description" name="product_desc" rows="12" cols="80"
                     requried></textarea>
             </div>
-            <div class="show-error"></div>
+
+            <div class="form-group">
+            <label for="product_gallery_images">Gallery Image</label>
+                <input type="file" multiple class="form-control product_gallery_images" id="product_gallery_images" name="product_gallery_images[]">
+
+                <div class="row" id="preview_img"></div>
+            </div>
+           
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                <label for="">Featured Image</label>
+                <label for="featured_img">Featured Image</label>
                 <input type="file" class="form-control product_image" id="featured_img" name="featured_img" onchange="thunmbnail_Url(this)">
                 <img id="image" src="" />
             </div>

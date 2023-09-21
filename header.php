@@ -150,7 +150,7 @@ $header = $result[0];
                             </div>
                            
                             <?php
-                            if(isset($_SESSION['user_role'])){                            
+                            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] != null){                            
                             ?>
                                 <div class="header__top__right__language">
                                 <img src="img/language.png" alt="">
@@ -206,19 +206,31 @@ $header = $result[0];
                     </nav>
                 </div>
                 <div class="col-lg-3">
-                    <?php
-                        if (isset($_SESSION['user_id'])){
+                  
+                    <div class="header__cart">
+                        <ul>
+                        <?php
+                        if(isset($_SESSION['user_id'])){
                         $db->select('cart',"COUNT(id) AS cart_count",null,"user_id={$_SESSION['user_id']}",null,null);
                         $exist = $db->getResult();
                         // print_r($exist[0]['cart_count']);
-                    }
                     ?>
-                    <div class="header__cart">
-                        <ul>
                     <li><a href="#"><i class="fa fa-heart"></i> <span class="wishlist-count"></span></a></li>
                     <li><a href="cart.php"><i class="fa fa-shopping-bag"></i> <span class="cart-count <?= $exist[0]['cart_count'] == 0 ? '':'cart-wishlist';?>"><?= $exist[0]['cart_count']==0 ? '':$exist[0]['cart_count'];?></span></a></li>
                         </ul>
                         <div class="header__cart__price">item: <span><?= $header['currency_format']; ?>150.00</span></div>
+
+                        <?php
+                        }else {
+                        ?>
+                      <li><a href="#"><i class="fa fa-heart"></i> <span class="wishlist-count"></span></a></li>
+                    <li><a href="cart.php"><i class="fa fa-shopping-bag"></i> <span class="cart-count"></span></a></li>
+                        </ul>
+                        <div class="header__cart__price">item: <span><?= $header['currency_format']; ?>150.00</span></div>
+
+                        <?php
+                        }
+                        ?>
                     </div>
                 </div>
             </div>

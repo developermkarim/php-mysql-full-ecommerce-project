@@ -246,21 +246,18 @@ $(document).ready(function(){
 
                     $('.cart-count').addClass('cart-wishlist');
                     $('.cart-count').text(cart_count);
-
+                  /*   $('#pd-details-cart').css('display','block'); */
                 }else if(response.hasOwnProperty('error')){
 
                     var errorMessage = response.error;
                     $('#ErrorMessageText').html(errorMessage + `Go To <a href='cart.php' class='text-primary'>Cart</a>`);
                     $('#ErrorMessageModal').modal('show');
-                   
-
                 }
 
                 else if(response.hasOwnProperty('showModal')){
 
                    $('#loginMessageText').html(`<span>${response.message}</span> <a href="#" data-toggle="modal" class="btn btn-outline-primary" data-dismiss="modal" data-target="#user_login_form">Login</a>`);
                     $('#loginMessageModal').modal('show');
-
                 }
 
             },
@@ -600,11 +597,11 @@ $(document).ready(function(){
                     $('#coupon-charge').remove();
                     return;
                 }
-                else if(rowCount > 1){
-                    coupon_price = response.coupon_price; 
-                }else if(rowCount > 2){
-                    coupon_price = response.gold_coupon;
-                }else if(rowCount > 3){
+                else if(rowCount == 2){
+                    coupon_price = response.silver_coupon; 
+                }else if(rowCount == 3){
+                coupon_price = response.gold_coupon;
+                }else if(rowCount >= 4){
                     coupon_price = response.platinum_coupon;
                 }
 
@@ -617,7 +614,7 @@ $(document).ready(function(){
                 $('#total').text(finalTotal);
 
                 if (rowCount > 1) {
-                     $('#deliver_li').after(`<li id="coupon-li">Coupon Charge : <span>${coupon_price}</span></li>`);
+                     $('#deliver_li').after(`<li id="coupon-li">Discount in Coupon : <span>${coupon_price}%</span></li>`);
                      $('#coupon-message').html(`<p class='text-success'><strong>Thanks!</strong> You Have applied Coupon!</p>`);
                 }
 

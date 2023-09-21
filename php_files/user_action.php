@@ -479,14 +479,16 @@ if (!session_id()){
 
             /* Cart Wise Coupon State Here */
             $user_id = $_SESSION['user_id'];
-            $db->select('cart','COUNT(id) as TotalCart',null,"user_id = $user_id");
+            $db->select('cart','COUNT(id) as TotalCart, SUM(quantity * price) as sub_total',null,"user_id = $user_id");
+            $carts = $db->getResult();
             if(!empty($coupon_data)){
 
                 /* Session Set for Whether session set or not */
                 $_SESSION['coupon-session'] = 'coupon_applied';
-
-                $coupon_price = $coupon_data[0]['value'];
-
+                $sub_total = $carts[0]['sub_total'];
+               /*  echo $sub_total; */
+                $coupon_price = ($sub_total * $coupon_data[0]['value']) / 100;
+         /*         echo $coupon_price; */
                 $_SESSION['coupon-price'] = $coupon_price;
 
             /* Sub Total Price of all carts with their all qauntities */
@@ -507,7 +509,7 @@ if (!session_id()){
             $db->select('coupons','value,title,code',null,"title = 'PLATINUM'");
             $platinum_coupon = $db->getResult();
 
-            echo json_encode(['success'=>'Coupon Is Successfully applied','subTotal'=>$sub_total,'rowCount'=>$rowCount,'coupon_price'=>$coupon_price,'silver_coupon'=>$silver_coupon[0]['code'],'gold_coupon'=>$gold_coupon,'platinum_coupon'=>$platinum_coupon]);
+            echo json_encode(['success'=>'Coupon Is Successfully applied','subTotal'=>$sub_total,'rowCount'=>$rowCount,'coupon_price'=>$coupon_price,'coupon_value'=>$coupon_data[0]['value'],'silver_coupon'=>$silver_coupon[0]['value'],'gold_coupon'=>$gold_coupon[0]['value'],'platinum_coupon'=>$platinum_coupon[0]['value']]);
 
 
             }else{

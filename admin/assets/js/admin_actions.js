@@ -97,6 +97,7 @@ $(document).ready(function () {
         var qty = $('.product_qty').val();
         var status = $('.product_status').val();
         var image = $('.product_image').val();
+        var product_gallery_images = $('.product_gallery_images').val();
         if (title == '') {
             $('#createProduct').prepend('<div class="alert alert-danger">Title Field is Empty.</div>');
         } else if (cat == '') {
@@ -111,6 +112,8 @@ $(document).ready(function () {
             $('#createProduct').prepend('<div class="alert alert-danger">Quantity Field is Empty.</div>');
         } else if (image == '') {
             $('#createProduct').prepend('<div class="alert alert-danger">Image Field is Empty.</div>');
+        }else if (product_gallery_images == '') {
+            $('#createProduct').prepend('<div class="alert alert-danger">Gallery Images Field is Empty.</div>');
         } else {
             var formdata = new FormData(this);
             formdata.append('create', 1);
@@ -142,9 +145,22 @@ $(document).ready(function () {
 
     })
 
+        // Function to show the preloader
+        function showPreloader() {
+            $('.preloader').fadeIn(300); // Display the preloader with a fade-in effect
+        }
+
+        // Function to hide the preloader
+        function hidePreloader() {
+            $('.preloader').fadeOut(300); // Hide the preloader with a fade-out effect
+        }
+
     /* Update Product Here */
     $('#update_product').submit(function (ev) {
-        ev.preventDefault();
+     ev.preventDefault();
+
+    // Show the preloader
+    showPreloader();
         $('.alert').hide();
         var title = $('.product_title').val();
         var cat = $('.product_category option:selected').val();
@@ -182,12 +198,19 @@ $(document).ready(function () {
                     console.log(res);
                     if (res.hasOwnProperty('success')) {
 
+                     // Hide the preloader after a minimum time (e.g., 2 seconds)
+                       setTimeout(function() {
+                        hidePreloader();
+                        }, 2000); // Adjust the time as needed
+
                         $('#update_product').prepend('<div class="alert alert-primary" role="alert"><strong>Product Updated is Successfully</strong></div>');
                         setTimeout(() => {
                             window.location =  URL + '/../admin/products.php';
-                        }, 1000)
+                        }, 3000)
+
                     } else if (res.hasOwnProperty('error')) {
                         $('#update_product').prepend('<div class="alert alert-danger" role="alert"><strong>Sorry! Product not Updated</strong></div>');
+                        showPreloader();
                     }
                 }
             })

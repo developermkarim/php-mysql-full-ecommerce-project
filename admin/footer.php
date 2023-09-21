@@ -60,6 +60,15 @@
       };
       reader.readAsDataURL(input.files[0]);
     }
+
+    /* Image Name Show By This */
+    if (input.files && input.files.length > 0) {
+    // Get the selected file name
+    const fileName = input.files[0].name;
+
+    // Update the value attribute of the input to display the file name
+    input.setAttribute('value', fileName);
+  }
     };
 
   
@@ -94,6 +103,47 @@
     printWindow.close();
 }
 
+$(document).ready(function(){
+ $('#product_gallery_images').on('change', function(){ //on file input change
+    if (window.File && window.FileReader && window.FileList && window.Blob) //check File API supported browser
+    {
+        var data = $(this)[0].files; //this file data
+         
+        $.each(data, function(index, file){ //loop though each file
+            if(/(\.|\/)(gif|jpe?g|png|webp)$/i.test(file.type)){ //check supported file type
+                var fRead = new FileReader(); //new filereader
+                fRead.onload = (function(file){ //trigger function on successful read
+                return function(e) {
+                    var img = $('<img/>').addClass('thumb').attr('src', e.target.result) .width(100)
+                .height(80); //create image element 
+                    $('#preview_img').append(img); //append image to output element
+                    $('.prev_images').hide();
+                };
+                })(file);
+                fRead.readAsDataURL(file); //URL representing the file's data.
+            }
+        });
+         
+    }else{
+        alert("Your browser doesn't support File API!"); //if File API is absent
+    }
+ });
+});
+
+
+/* Multiple Image select Names */
+const inputElement = document.getElementById('product_gallery_images');
+  const labelElement = document.querySelector('label[for="product_gallery_images"]');
+
+  inputElement.addEventListener('change', function () {
+    const files = inputElement.files;
+    if (files.length > 0) {
+      let fileNames = Array.from(files).map(file => file.name).join(', ');
+      labelElement.textContent = 'Gallery Images: ' + fileNames;
+    } else {
+      labelElement.textContent = 'Gallery Image';
+    }
+  });
 </script>
 </body>
 

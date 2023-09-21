@@ -39,6 +39,14 @@ if (isset($_SESSION['adminName'])) {
 </head>
 <body>
 
+
+
+     <!-- Preloader HTML -->
+     <div class="preloader">
+        <div class="loader"></div>
+    </div>
+
+    
 <main>
     <div class="container">
 

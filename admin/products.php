@@ -9,12 +9,13 @@ include_once './header.php';
         </div>
 
         <?php
-    $limit = 10;
+    $limit = 30;
       $db->select('products','products.product_id,products.product_code,products.product_price,products.product_status,products.qty,products.featured_image,products.featured_product,products.product_cat,products.product_sub_cat,products.product_brand,products.product_title,sub_categories.sub_cat_title,brands.brand_id,brands.brand_title','sub_categories ON products.product_sub_cat = sub_categories.sub_cat_id LEFT JOIN brands ON products.product_brand=brands.brand_id',null,'products.product_id DESC',$limit);
-
+ //  LEFT JOIN gallery_images ON products.product_id = gallery_images.product_id
+ // gallery_images.gallery_image, gallery_images.product_id as gallery_product_id
       $result = $db->getResult();
 
-    //   print_r($result);
+      
       
     ?>
 
@@ -29,6 +30,7 @@ include_once './header.php';
                 <th>Quantity</th>
                 <th>Featured Products</th>
                 <th>Image</th>
+                <th>Gallery Image</th>
                 <th>Status</th>
                 <th width="100px">Action</th>
             </thead>
@@ -38,7 +40,7 @@ include_once './header.php';
                 <?php
                 if(count($result) > 0){
                 foreach ($result as $key => $value) {
-                    
+                    // print_r($value['gallery_image']);
                 ?>
                 <tr>
                     <td><?= ++$key  ?></td>
@@ -80,6 +82,43 @@ include_once './header.php';
                         <?php
                 }
 ?>
+
+                    </td>
+
+                    <!-- Gallery Image Show Here -->
+                    <td>
+                        <?php
+                        error_reporting(0);
+                       if (isset($value['product_id'])) {
+                     
+                       $db->select('gallery_images','gallery_image',null,"product_id = {$value['product_id']}");
+                          $gallery_result = $db->getResult();
+                        //   print_r($gallery_result);
+                        if(count($gallery_result) > 0 || $gallery_result == null){ 
+                        foreach($gallery_result as $gall_key => $gallery_image):
+                            ?>
+                        <img  src="./../admin/product_images/<?= $gallery_image['gallery_image'];?>"
+                            alt="<?= $gallery_image['gallery_image']  ?>" width="35" height="30"> <br>
+
+                        <?php
+                    endforeach;    
+
+                      }
+
+                     else{
+                      ?>
+
+                        <img src="https://indolinkenglish.files.wordpress.com/2011/06/consumer10.jpg"
+                            alt="" width="10" height="10">
+                        <?php
+                         }
+                     }else{
+                      ?>
+                        <img src="https://indolinkenglish.files.wordpress.com/2011/06/consumer10.jpg"
+                        alt="" width="10" height="10">;
+                        <?php
+                     }
+                        ?>
                     </td>
 
                     <td>

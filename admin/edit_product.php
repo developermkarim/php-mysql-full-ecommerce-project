@@ -98,8 +98,27 @@ include 'header.php';
                     <label >Product Description</label>
                     <textarea class="form-control product_description" name="product_desc"  rows="8" cols="80" requried><?= $product_row['product_desc'];?></textarea>
                 </div>
-                <div class="show-error"></div>
-            
+
+
+            <div class="form-group">
+            <label for="product_gallery_images">Gallery Image</label>
+                <input type="file" multiple class="form-control product_gallery_images" id="product_gallery_images" name="product_gallery_images[]">
+
+            <div class="row" id="preview_img"></div>
+
+            <?php
+
+        $db->select('products','gallery_image,image_path,product_name'," gallery_images ON products.product_id = gallery_images.product_id","products.product_id = {$product_id}");
+        $gallery_images = $db->getResult();
+
+            foreach ($gallery_images as $gallery_image):
+            ?>
+             <img src="./../admin/product_images/<?= $gallery_image['gallery_image'];?>" class="mb-2 prev_images" alt="<?= $gallery_image['product_name'];?>" style="width: 100px; height: 80px;">
+            <?php
+            endforeach;
+            ?>
+            </div>
+
             </div>
         </div>
         <div class="col-md-3">
