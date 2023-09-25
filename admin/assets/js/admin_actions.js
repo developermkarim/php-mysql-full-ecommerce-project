@@ -1034,9 +1034,6 @@ $('.status-change').click(function(ev){
                       // Assuming that the server sends back a response indicating success
                     var newStatusText = response.status; // Replace with the desired text
                     clickedBtn.text(newStatusText);
-
-                    // Optionally, you can also change the data-order-status attribute
-                  //  clickedBtn.data('order-status', newStatusText);
                   
                 }
 

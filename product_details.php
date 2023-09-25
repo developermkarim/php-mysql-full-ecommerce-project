@@ -199,92 +199,136 @@ include './bottom-header.php';
                             <div class="product__details__tab__desc">
                                 <h6>Products Review</h6>
 
+                                <?php
+                                $db->select('reviews','*,SUM(rating) as total_ratings,AVG(rating) AS average_ratings',null,"product_id = {$_GET['pid']}");
+                                $product_wise_reviews = $db->getResult();
+
+                            
+                                $db->sql('SELECT * FROM reviews');
+                                $all_stars = $db->getResult();
+                                // Initialize an array to store the count of each star rating
+                                    $starCounts = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+
+                                    // Loop through the reviews and count each star rating
+                                    foreach ($all_stars[0] as $review) {
+                                        $rating = $review['rating'];
+                                        if ($rating >= 1 && $rating <= 5) {
+                                            // Increment the count for the corresponding star rating
+                                            $starCounts[$rating]++;
+                                        }
+                                    }
+
+                                    // Access the counts for each star rating
+                                    $one_star = $starCounts[1];
+                                    $two_star = $starCounts[2];
+                                    $three_star = $starCounts[3];
+                                    $four_star = $starCounts[4];
+                                    $five_star = $starCounts[5];
+
+                                    // Display the counts
+/*                                     echo "One Star: $one_star<br>";
+                                    echo "Two Stars: $two_star<br>";
+                                    echo "Three Stars: $three_star<br>";
+                                    echo "Four Stars: $four_star<br>";
+                                    echo "Five Stars: $five_star<br>"; */
+
+                                    $one_star_percentage = ($one_star / $product_wise_reviews[0]['total_ratings']) * 100;
+                                    $two_star_percentage = ($two_star / $product_wise_reviews[0]['total_ratings']) * 100;
+                                    $three_star_percentage = ($three_star / $product_wise_reviews[0]['total_ratings']) * 100;
+                                    $four_star_percentage = ($four_star / $product_wise_reviews[0]['total_ratings']) * 100;
+                                    $five_star_percentage = ($five_star / $product_wise_reviews[0]['total_ratings']) * 100;                                    
+                                   
+                                    // Echo the variables
+                                    /* echo "One Star Percentage: $one_star_percentage%";
+                                    echo "Two Star Percentage: $two_star_percentage%";
+                                    echo "Three Star Percentage: $three_star_percentage%";
+                                    echo "Four Star Percentage: $four_star_percentage%";
+                                    echo "Five Star Percentage: $five_star_percentage%"; */
+
+                                $average_ratings = $product_wise_reviews[0]['average_ratings'];
+                                // echo ceil($average_ratings);
+                                ?>
                                 <div class="container">
 
                                     <div class="row">
                                         <div class="col-sm-3">
                                             <div class="rating-block">
                                                 <h4>Average user rating</h4>
-                                                <h2 class="bold padding-bottom-7">4.3 <small>/ 5</small></h2>
+                                                <h2 class="bold padding-bottom-7"><?= number_format($average_ratings,2);?> <small>/ 5</small></h2>
+
+                                                <?php
+                                                $full_stars = floor($average_ratings);
+                                               // Calculate whether to display a half star (if the decimal part of the rating is > 0 and < 0.5)
+                                                $half_stars = ($average_ratings - $full_stars) > 0 && ($average_ratings - $full_stars) < 0.5;
+
+                                                // Calculate the number of empty stars (5 - fullStars - halfStar)
+                                                $emptyStars = 5 - $full_stars - ($half_stars ? 1 : 0);
+                                                // Generate star icons based on the average rating
+
+                                                $html_stars = '';
+                                                
+                                                    for ($i=0; $i < $full_stars; $i++) { 
+                                               
+                                                        $html_stars .= ' <li>
+                                                        <i class="fa fa-star fa-sm text-warning"></i>
+                                                    </li>';
+                                                    }
+                                                
+                                                if($half_stars){
+                                                    $html_stars .= '<li>
+                                                    <i class="fa fa-star-half-full fa-sm text-warning"></i>
+                                                </li>';
+                                                }
+                                                for ($i=0; $i < $emptyStars; $i++) { 
+                                                    $html_stars .= '<li>
+                                                    <i class="fa fa-star-o fa-sm text-warning"></i>
+                                                </li>';
+                                                }
+                                                ?>
                                                 <ul class="list-unstyled d-flex justify-content-left mb-0">
-                                                    <li>
-                                                        <i class="fa fa-star fa-sm text-warning"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i class="fa fa-star fa-sm text-warning"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i class="fa fa-star fa-sm text-warning"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i class="fa fa-star fa-sm text-warning"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i class="fa fa-star-half-full fa-sm text-warning"></i>
-                                                    </li>
+                                                   <?= $html_stars;?>
                                                 </ul>
                                                 <div>
-                                                    <i class="fa fa-user" aria-hidden="true"></i> 1,050,008 total
+                                                    <i class="fa fa-user" aria-hidden="true"></i> <?= $product_wise_reviews[0]['total_ratings'];?> total
                                                 </div>
                                             </div>
                                         </div>
 
 
-                                <div class="col-sm-3">
-                                    <h4>Rating breakdown</h4>
+<div class="col-sm-3">
+    <h4>Rating breakdown</h4>
 
-                                    <div class="d-flex align-items-center my-2" style="line-height:0.5;">
-                                    <span> <i class="fa fa-star" aria-hidden="true"></i> </span>&nbsp;
-                                    <span> 5 </span> &nbsp; &nbsp;
-                                    <div class="progress  w-100">
-                                        <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 80%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            80%
-                                        </div>
-                                    </div>
-                                </div>
+    <?php
+    // Use the calculated percentage values here
+    $star_ratings = [5 => $five_star_percentage, 4 => $four_star_percentage, 3 => $three_star_percentage, 2 => $two_star_percentage, 1 => $one_star_percentage];
 
-                                <div class="d-flex align-items-center my-2" style="line-height:0.5;">
-                                    <span> <i class="fa fa-star" aria-hidden="true"></i> </span>&nbsp;
-                                    <span> 4 </span> &nbsp; &nbsp;
-                                    <div class="progress w-100">
-                                        <div class="progress-bar progress-bar-striped bg-primary" role="progressbar" style="width: 65%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            65%
-                                        </div>
-                                    </div>
-                                </div>
+    // Define background colors for progress bars based on your preferences
+    $progress_bar_colors = [
+        5 => 'bg-success',
+        4 => 'bg-primary',
+        3 => 'bg-info',
+        2 => 'bg-warning',
+        1 => 'bg-danger'
+    ];
 
-                                <div class="d-flex align-items-center my-2" style="line-height:0.5;">
-                                    <span> <i class="fa fa-star" aria-hidden="true"></i> </span>&nbsp;
-                                    <span> 3 </span> &nbsp; &nbsp;
-                                    <div class="progress w-100">
-                                        <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 56%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            56%
-                                        </div>
-                                    </div>
-                                </div>
+    // Loop through each star rating and display the progress bar
+    foreach ($star_ratings as $rating => $percentage) {
+    ?>
+    <div class="d-flex align-items-center my-2" style="line-height: 0.5;">
+        <span> <i class="fa fa-star" aria-hidden="true"></i> </span>&nbsp;
+        <span> <?= $rating ?> </span> &nbsp; &nbsp;
+        <div class="progress w-100">
+            <div class="progress-bar progress-bar-striped <?= $progress_bar_colors[$rating] ?>" role="progressbar" style="width: <?= $percentage ?>%" aria-valuenow="<?= $percentage ?>" aria-valuemin="0" aria-valuemax="100">
+                <?= number_format($percentage, 2) ?>%
+            </div>
+        </div>
+    </div>
+    <?php
+    }
+    ?>
 
-                                <div class="d-flex align-items-center my-2" style="line-height:0.5;">
-                                    <span> <i class="fa fa-star" aria-hidden="true"></i> </span>&nbsp;
-                                    <span> 2 </span> &nbsp; &nbsp;
-                                    <div class="progress w-100">
-                                        <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 30%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            30%
-                                        </div>
-                                    </div>
-                                </div>
+</div>
 
-                                <div class="d-flex align-items-center my-2" style="line-height:0.5;">
-                                    <span> <i class="fa fa-star" aria-hidden="true"></i> </span>&nbsp;
-                                    <span> 1 </span> &nbsp; &nbsp;
-                                    <div class="progress w-100">
-                                        <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width: 15%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                                            15%
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                </div>
 
                                     </div>
 

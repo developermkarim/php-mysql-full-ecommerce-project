@@ -931,28 +931,6 @@ $(document).ready(function(){
         })
       })
 
-/*      
-  Review Click Star Here , It is For Clicked
-      var selectedRating = 0;
-
-    $('.fa-star-o').click(function() {
-        var newRating = $(this).data('value');
-        // If the same star is clicked again, deselect it
-        if (newRating === selectedRating) {
-            selectedRating = 0;
-            $(this).removeClass('fa-star').addClass('fa-star-o');
-        } else {
-            selectedRating = newRating;
-            $(this).removeClass('fa-star-o').addClass('fa-star');
-
-            // Deselect all stars to the left of the clicked star
-            $(this).prevAll().removeClass('fa-star-o').addClass('fa-star');
-            // Deselect all stars to the right of the clicked star
-            $(this).nextAll().removeClass('fa-star').addClass('fa-star-o');
-        }
-
-    }) */
-
     var starCount = 0; // Initialize star count
 
     // Click event for star icons
@@ -975,8 +953,21 @@ $(document).ready(function(){
         console.log(starCount);
         // Send the starCount to the server using an AJAX request
         // Replace this with your actual AJAX request code
-      
 });
+
+// For Star Functions
+    // Function to generate star icons based on the user's rating
+    function generateStars(review_star) {
+        var starIcon = '';
+        for (var i = 1; i <= 5; i++) {
+            if (i <= review_star) {
+                starIcon += '<i class="fa fa-star fa-sm text-warning"></i>';
+            } else {
+                starIcon += '<i class="fa fa-star-o fa-sm text-warning"></i>';
+            }
+        }
+        return starIcon;
+    }
 
          // Handle form submission
     $('#review-form').submit(function(event) {
@@ -1030,22 +1021,16 @@ $(document).ready(function(){
                 var review_data = response.review_data;
                 console.log(review_data);
                 var review_star = review_data.rating;
-                var starIcon = '';
-                if(review_star > 0){
-                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
-                }if(review_star >= 1){
-                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
-                
-                }if(review_star >= 2){
-                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
-                
-                }if(review_star >= 3){
-                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
-                
-                }if(review_star >= 4){
-                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
-                }
-                // console.log(starIcon);
+              /*   var starIcon = '';
+               
+                for (let i = 1; star < 5; star++) {
+                    
+                    if(i <= review_star){
+                    starIcon += '<li><i class="fa fa-star fa-sm text-warning"></i></li>';
+                    }else{
+                    starIcon += '<li><i class="fa fa-star-o fa-sm text-warning"></i></li>';
+                    }
+                } */
 
                 var reviewer = `<div class="row">
                 <div class="col-sm-5">
@@ -1060,7 +1045,7 @@ $(document).ready(function(){
                 <div class="col-sm-7">
                     <div class="review-block-rate">
                         <ul class="list-unstyled d-flex justify-content-left mb-0">
-                       ${starIcon}
+                       ${generateStars(review_star)}
                         </ul>
                     </div>
                     <div class="review-block-description"><blockquote class="blockquote">
