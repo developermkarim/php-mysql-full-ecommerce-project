@@ -12,9 +12,32 @@ if(isset($_SESSION['user_id']) && $_SESSION['user_role'] == 'user'){
 include './header.php';
 
 $db = new Database;
-$db->select('orders','*,order_details.price as product_price, user.mobile as vendor_phone,user.username as vendor_name',' order_details ON orders.id = order_details.order_id JOIN products ON order_details.product_id = products.product_id JOIN user ON orders.user_id = user.user_id',"orders.user_id = {$_SESSION['user_id']}");
+$db->select('orders','*,order_details.price as product_price, user.mobile as vendor_phone,user.username as vendor_name',' order_details ON orders.id = order_details.order_id JOIN products ON order_details.product_id = products.product_id JOIN user ON orders.user_id = user.user_id',"orders.user_id = {$_SESSION['user_id']} and order_details.order_id = orders.id and orders.status = 'Pending'");
+/* $db->sql("SELECT 
+orders.*,
+order_details.price AS product_price,
+user.mobile AS vendor_phone,
+user.username AS vendor_name,
+SUM(order_details.quantity) AS total_quantity
+FROM
+orders
+JOIN
+order_details ON orders.id = order_details.order_id
+JOIN
+products ON order_details.product_id = products.product_id
+JOIN
+user ON orders.user_id = user.user_id
+WHERE
+orders.user_id = {$_SESSION['user_id']}
+AND order_details.order_id = orders.id
+AND orders.status = 'Pending'
+GROUP BY
+orders.user_id,
+products.product_id"); */
+
 $order_products = $db->getResult();
-/* print_r($order_products); */
+
+print_r($order_products);
 ?>
 
 <div class="track-container mx-5">
@@ -34,7 +57,9 @@ $order_products = $db->getResult();
 
 
         <div class="card-body">
+
             <h6>Order ID: <?= $order_products[0]['order_code'];?></h6>
+
             <article class="tack-card">
                 <div class="card-body row">
                     <div class="col"> <strong>Estimated Delivery time:</strong> <br>29 nov 2019 </div>
@@ -43,6 +68,7 @@ $order_products = $db->getResult();
                     <div class="col"> <strong>Tracking #:</strong> <br>  <span class="tracking_id"> <?= $order_products[0]['tracking_id'];?></span> </div>
                 </div>
             </article>
+
             <div class="track">
                 <div class="step  active"> <span class="icon"> <i class="fa fa-clock-o" aria-hidden="true"></i> </span> <span class="text">Order confirmed</span> </div>
                 <div class="step "> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
@@ -50,16 +76,17 @@ $order_products = $db->getResult();
                 <div class="step "> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
                 <div class="step "> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Ready for pickup</span> </div>
             </div>
+
             <hr>
             <ul class="row">
-
+                
                 <?php
                 foreach ($order_products as $key => $order_product):
                 ?>
 
                 <li class="col-md-4">
                     <figure class="itemside mb-3">
-                        <div class="aside"><img src="https://i.imgur.com/iDwDQ4o.png" class="img-sm border"></div>
+                        <div class="aside"><img src="./admin/product_images/<?= $order_product['featured_image'];?>" class="img-sm border"></div>
                         <figcaption class="info align-self-center">
                             <?php
                             $title_arr = explode(' ',$order_product['product_title']);

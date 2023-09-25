@@ -720,44 +720,62 @@ if (!empty($response['error'])) {
                         'currency'=> 'BDT',
                     ];
 
-
-                
-
                     $db->insert('orders',$order_params);
                     $orderInserted = $db->getResult();
                            if(!empty($orderInserted)){
                             $_SESSION['total'] = $_POST['total'];
                             $_SESSION['subtotal'] = $_POST['subtotal'];
                             $response['success'] = "$payment Payment Successful and Customer Billing address added and Order is Pending";
-
+                            $order_id = $db->getLastInsertId();
                             //  id	order_id	product_id	user_id	price	quantity	created_at	
                             /* Cart Order Details Here */
                       /* Product ID , name collect to store order , order_details, cart,transactions */
-                $db->select('products','cart.quantity * cart.price as cart_product_price,cart.product_id as cart_product_id, products.product_title as cart_product_title, cart.quantity as cart_product_quantity, orders.id as product_order_id'," cart ON cart.product_id = products.product_id JOIN orders ON orders.user_id = cart.user_id","orders.user_id = {$_SESSION['user_id']} ");
-                $cart_wise_products_arr = $db->getResult();
-                
-                // print_r($cart_wise_products_arr);
-                            foreach ($cart_wise_products_arr as $key => $order_detail) {
-                                $order_details_params = [
-                                    'order_id' => $order_detail['product_order_id'],
-                                    'product_id' => $order_detail['cart_product_id'],
-                                    'user_id' => $_SESSION['user_id'],
-                                    'price' => $order_detail['cart_product_price'],
-                                    'quantity' => $order_detail['cart_product_quantity'],
-                                ];
-
-                            $db->insert('order_details',$order_details_params);
-                             $isOrder_details_inserted =  $db->getResult();
-                            };
                             
-                         if(!empty($isOrder_details_inserted)){
-                        
-                          $db->delete('cart',"user_id = {$_SESSION['user_id']}");
-                            $db->getResult();
+/*                 $db->select('products','DISTINCT products.product_id as cart_product_id, cart.quantity * cart.price as cart_product_price, products.product_title as cart_product_title, cart.quantity as cart_product_quantity, orders.id as product_order_id'," cart ON cart.product_id = products.product_id JOIN orders ON orders.user_id = cart.user_id","cart.user_id = {$_SESSION['user_id']} "); */
 
-                          }
+              //  $db->sql("SELECT product_id, price, quantity FROM cart WHERE user_id = {$_SESSION['user_id']}");
+              $db->select('cart','*',null,"user_id = {$_SESSION['user_id']}");
+                $cart_wise_products_arr = $db->getResult();
+
+            //  print_r(count($cart_wise_products_arr));exit;
+                // print_r($cart_wise_products_arr);exit; 
+
+                foreach ($cart_wise_products_arr as $key => $order_detail) {
+                    $cart_product_id = $order_detail['product_id'];
+               
+                    $order_details_params = [
+                        'order_id' => $order_id,
+                        'product_id' => $order_detail['product_id'],
+                        'user_id' => $_SESSION['user_id'],
+                        'price' => $order_detail['price'],
+                        'quantity' => $order_detail['quantity'],
+                    ];
+                
+                    // Check if the order detail already exists
+                
+/*                    $db->sql("SELECT *  FROM order_details WHERE  product_id = {$cart_product_id}  AND user_id = {$_SESSION['user_id']}");
+                   $existingOrderDetail = $db->getResult();
+                //   print_r($existingOrderDetail);exit;
+                    if (isset($existingOrderDetail[$key])) {
+                        // Order detail exists, update the quantity
+                        $update_details = $existingOrderDetail[$key];
+             
+                        $oldQuantity = $update_details[0]['quantity'];
+                        $newQuantity = $oldQuantity + $order_details_params['quantity'];
+                        $db->update('order_details', ['quantity' => $newQuantity], "product_id = {$cart_product_id} AND user_id = {$_SESSION['user_id']}");
+                        $db->getResult();
+                    } else { */
+                        // Order detail doesn't exist, insert a new record
+                        $db->insert('order_details', $order_details_params);
+                          $isInserted = $db->getResult();
+                    }
+                               if(!empty($isInserted)){
+                                $db->delete('cart',"user_id = {$_SESSION['user_id']}");
+                                $db->getResult();
+                               }
 
                         }
+
                    $response['success'] = "$payment Payment Successful and Customer Billing address added";
 
                    }else{
@@ -815,3 +833,160 @@ if ($payment_successful) {
             echo json_encode(['error'=> "Sorry, No data Matched in Search Of \"$searchValue\""]);
            }
   }
+
+
+  /* Review Here  */
+
+   if(isset($_POST['isReview'])) {
+    //   echo  $_POST['isReview'];
+    if (!isset($_SESSION['user_id'])) {
+        $response = array(
+            "notLogin" => "Please Login before  Review in Product",
+            "showModal" => true  // This could be a flag to indicate whether to show the modal
+        );
+        echo json_encode($response);
+        exit;
+    }
+
+    $db = new Database;
+    $name = $db->escapeString($_POST['name']);
+    $product_id = $db->escapeString($_POST['product_id']);
+    $email = $db->escapeString($_POST['email']);
+    $message = $db->escapeString($_POST['message']);
+    $rating = $db->escapeString($_POST['rating']);
+
+// Create an associative array
+$data = array(
+    'name' => $name,
+    'email' => $email,
+    'message' => $message,
+    'rating' => $rating,
+    'product_id' => $product_id,
+    'user_id'=>$_SESSION['user_id'],
+);
+    $db->select('reviews','email',null,"email = '{$email}'",null,null);
+    $isReviewed = $db->getResult();
+
+        if(!empty($isReviewed)){
+
+      echo json_encode(['error'=>"Sorry, User review is already existed"]);exit;
+
+         }else{
+
+        $db->insert('reviews',$data);
+        $isInserted = $db->getResult();
+
+               if(!empty($isInserted)){
+
+                $db->select('reviews','*',null,"email = '{$email}' AND product_id = {$product_id}",null,null);
+                $newReviewed = $db->getResult()[0];
+                // $totalDate = '2023-09-21 17:07:27';
+
+// Convert the string to a DateTime object
+$date = new DateTime($newReviewed['review_date']);
+
+// Assuming the timestamps are in Dhaka timezone
+$date = new DateTime($newReviewed['review_date'], new DateTimeZone('Asia/Dhaka'));
+$currentDate = new DateTime('now', new DateTimeZone('Asia/Dhaka'));
+
+// Calculate the difference between the two dates in seconds
+$timeDifference = $currentDate->getTimestamp() - $date->getTimestamp();
+
+// Ensure the difference is positive
+$timeDifference = abs($timeDifference);
+
+if ($timeDifference < 60) {
+    // Less than a minute ago
+    $dateString = $timeDifference . ' second' . ($timeDifference !== 1 ? 's' : '') . ' ago';
+} elseif ($timeDifference < 3600) {
+    // Less than an hour ago
+    $minutesDifference = floor($timeDifference / 60);
+    $dateString = $minutesDifference . ' minute' . ($minutesDifference !== 1 ? 's' : '') . ' ago';
+} elseif ($timeDifference < 86400) {
+    // Less than a day ago
+    $hoursDifference = floor($timeDifference / 3600);
+    $dateString = $hoursDifference . ' hour' . ($hoursDifference !== 1 ? 's' : '') . ' ago';
+} else {
+    // Days ago
+    $daysDifference = floor($timeDifference / 86400);
+    $dateString = $daysDifference . ' day' . ($daysDifference !== 1 ? 's' : '') . ' ago';
+}
+
+// Format the date as "Month Day, Year"
+$date->setTimezone(new DateTimeZone('Asia/Dhaka'));
+$formattedDate = $date->format('F d, Y');
+
+              echo json_encode(['success'=>'Your Review is Saved Successfully','review_data'=>$newReviewed,'review_time'=>$dateString,'review_date'=>$formattedDate]);
+
+               }else{
+
+                echo json_encode(['error'=>"Sorry, User review is already existed"]);exit;
+
+               }
+
+         }
+
+}
+
+
+if (isset($_POST['isClicked'])){
+             
+    // isClicked:'1',product_id:product_id,reviewCountInc:review_increment,existReviewCount:existReviewCount
+
+    $db = new Database;
+    $product_id = $_POST['productId'];
+    $offset = $_POST['displayedCount'];
+    $limit = $_POST['limit'];
+  
+    // Query your database to fetch data using LIMIT and OFFSET
+
+    $db->sql("SELECT * FROM reviews WHERE product_id = {$product_id} ORDER BY id DESC LIMIT {$limit} OFFSET {$offset}");
+    $review_result = $db->getResult();
+
+    if(!empty($review_result)){
+
+        echo json_encode(['review_data'=>$review_result]);exit;
+
+    }else{
+        echo json_encode(['error'=>'No More Review found']);exit;
+    }
+}
+
+    /* // $db->select('reviews','*',null,"product_id = {$product_id}",null,"$review_count_inc,3");
+    $db->sql("SELECT * FROM reviews WHERE product_id = {$product_id} ORDER BY id DESC LIMIT $review_count_inc,3");
+    $review_result1 = $db->getResult();
+    // print_r($review_result[0]);
+    if(!empty($review_result1)){
+
+        echo json_encode(['review_data'=>$review_result1]);exit;
+
+    }else{
+
+        $db->sql("SELECT * FROM reviews WHERE product_id = {$product_id} ORDER BY id DESC LIMIT $review_count_inc,2");
+        $review_result2 = $db->getResult();
+
+        if(!empty($review_result2)){
+
+            echo json_encode(['review_data'=>$review_result2]);exit;
+    
+        }else{
+
+            echo json_encode(['review_data'=>$review_result2]);exit;
+
+            $db->sql("SELECT * FROM reviews WHERE product_id = {$product_id} ORDER BY id DESC LIMIT $review_count_inc,1");
+            $review_result3 = $db->getResult();
+            if(!empty($review_result3)){
+    
+                echo json_encode(['review_data'=>$review_result3]);
+    
+            }else{
+                echo json_encode(['error'=>'No More Review found']);
+            }
+        }
+    }
+
+
+ */
+
+
+ 

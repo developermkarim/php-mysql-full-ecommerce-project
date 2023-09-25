@@ -132,7 +132,7 @@ $(document).ready(function(){
 
 
 /* Multiple Image select Names */
-const inputElement = document.getElementById('product_gallery_images');
+/* const inputElement = document.getElementById('product_gallery_images');
   const labelElement = document.querySelector('label[for="product_gallery_images"]');
 
   inputElement.addEventListener('change', function () {
@@ -143,7 +143,8 @@ const inputElement = document.getElementById('product_gallery_images');
     } else {
       labelElement.textContent = 'Gallery Image';
     }
-  });
+  }); */
+
 </script>
 </body>
 

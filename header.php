@@ -43,14 +43,59 @@ $header = $result[0];
         .cart-wishlist{
             background: #7fad39;
         }
+
+    .popup {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 5px;
+    z-index: 1000;
+}
+.preloader {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+/* CSS for star scaling */
+.star-scale {
+    transform: scale(1.4); /* Increase the scale factor as needed */
+    transition: transform 0.2s ease-in-out; /* Adjust the duration and easing as needed */
+}
+.star-icon li i.fa-star , .star-icon li i.fa-star-o{
+    font-size:larger;
+}
+
+.blockquote {
+  margin: 10px 0; /* Add margin for separation */
+  font-style: italic; /* Apply italic style to the text */
+}
+
+.blockquote-footer {
+  text-align: right; /* Align the author's name to the right */
+}
+
+
     </style>
 </head>
 
 <body>
     <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
+<div id="preloader" class="preloader">
+    <img src="./forntend_assets/spinner.gif" alt="Loading...">
+</div>
+
+
+<div id="popup" class="popup">
+    <span class="popup-message"></span>
+</div>
 
 
 

@@ -1010,4 +1010,51 @@ $('.delete_coupon').click(function(ev){
     }
 })
 
+
+/* Order status Change */
+
+$('.status-change').click(function(ev){
+    ev.preventDefault();
+    var currentStatus = $(this).data('order-status');
+    var currentOrderId = $(this).data('order-id');
+  // Find the clicked button based on data attributes
+  var clickedBtn = $(this); // clicked button span
+
+/*     console.log(currentStatus);
+    console.log(currentOrderId); */
+
+        $.ajax({
+            url:'php_files/order_status.php',
+            method:"POST",
+            data:{order_status:'1',order_details_id:currentOrderId,current_status:currentStatus},
+            dataType: 'json',
+            success:function(response){
+                console.log(response.success);
+                if (response.status) {
+                      // Assuming that the server sends back a response indicating success
+                    var newStatusText = response.status; // Replace with the desired text
+                    clickedBtn.text(newStatusText);
+
+                    // Optionally, you can also change the data-order-status attribute
+                  //  clickedBtn.data('order-status', newStatusText);
+                  
+                }
+
+                if(response.hasOwnProperty('success')){
+                  
+                 $('.order-data-table').before(`<div class="alert alert-success">${response.success}.</div>`);
+                    
+                }else if(response.hasOwnProperty('error')){
+                    $('.order-data-table').before(`<div class="alert alert-danger">${response.error}.</div>`);
+                }
+
+            },
+            error: function() {
+                alert("Error occurred while deleting the record.");
+            }
+
+        })
+
+})
+
 });

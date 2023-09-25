@@ -151,6 +151,7 @@ $footer = $result[0];
     <script src="forntend_assets/js/mixitup.min.js"></script>
     <script src="forntend_assets/js/owl.carousel.min.js"></script>
     <script src="forntend_assets/js/iziToast.min.js"></script>
+    <script src="forntend_assets/js/review.js"></script>
     <script src="forntend_assets/js/script.js"></script>
     <script src="forntend_assets/js/user_action.js"></script>
 </body>

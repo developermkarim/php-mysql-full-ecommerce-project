@@ -42,9 +42,9 @@ if (isset($_SESSION['adminName'])) {
 
 
      <!-- Preloader HTML -->
-     <div class="preloader">
+ <!--     <div class="preloader">
         <div class="loader"></div>
-    </div>
+    </div> -->
 
     
 <main>

@@ -10,8 +10,30 @@ include './header.php';
 
 $db = new Database;
 
+
 // $db->select('orders','*',null,"user_id={$_SESSION['user_id']}");
-$db->select('orders','*,order_details.price as product_price, user.mobile as vendor_phone,user.username as vendor_name,orders.status as order_status',' order_details ON orders.id = order_details.order_id JOIN products ON order_details.product_id = products.product_id JOIN user ON orders.user_id = user.user_id',"orders.user_id = {$_SESSION['user_id']}");
+/* $db->select('orders','order_details.price as product_price, user.mobile as vendor_phone,user.username as vendor_name,orders.status as order_status',' order_details ON orders.id = order_details.order_id JOIN products ON order_details.product_id = products.product_id JOIN user ON orders.user_id = user.user_id',"order_details.user_id = {$_SESSION['user_id']} and orders.id = order_details.order_id and orders.order_status = 'Pending'"); */
+$db->sql("SELECT 
+order_details.price AS product_price,
+user.mobile AS vendor_phone,
+user.username AS vendor_name,
+orders.status AS order_status,
+products.product_desc as product_desc,
+products.product_title as product_title
+FROM
+orders
+JOIN
+order_details ON orders.id = order_details.order_id
+JOIN
+products ON order_details.product_id = products.product_id
+JOIN
+user ON orders.user_id = user.user_id
+WHERE
+order_details.user_id = {$_SESSION['user_id']}
+AND orders.id = order_details.order_id
+AND orders.status = 'Pending';
+");
+
 $order_products = $db->getResult();
 // echo count($order_details);
  print_r($order_products);
@@ -34,7 +56,7 @@ echo $random; */
             <p><b>Payment Summary</b></p>
         </span>         
       <?php
-      foreach ($order_products as $key => $order_product):
+      foreach ($order_products[0] as $key => $order_product):
       ?>
         <div class="row row-main">
             <div class="col-3 "> <img class="img-fluid" src="https://i.imgur.com/hOsIes2.png"> </div>

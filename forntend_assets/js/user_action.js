@@ -928,8 +928,334 @@ $(document).ready(function(){
 
             }
            
-
         })
       })
+
+/*      
+  Review Click Star Here , It is For Clicked
+      var selectedRating = 0;
+
+    $('.fa-star-o').click(function() {
+        var newRating = $(this).data('value');
+        // If the same star is clicked again, deselect it
+        if (newRating === selectedRating) {
+            selectedRating = 0;
+            $(this).removeClass('fa-star').addClass('fa-star-o');
+        } else {
+            selectedRating = newRating;
+            $(this).removeClass('fa-star-o').addClass('fa-star');
+
+            // Deselect all stars to the left of the clicked star
+            $(this).prevAll().removeClass('fa-star-o').addClass('fa-star');
+            // Deselect all stars to the right of the clicked star
+            $(this).nextAll().removeClass('fa-star').addClass('fa-star-o');
+        }
+
+    }) */
+
+    var starCount = 0; // Initialize star count
+
+    // Click event for star icons
+    $('ul li i').click(function() {
+        // Get the data-value attribute of the clicked star
+        var value = $(this).data('value');
+
+        // Highlight the clicked star and stars before it
+        for (var i = 1; i <= value; i++) {
+            $('#star-' + i).removeClass('fa-star-o').addClass('fa-star'); // Add class
+        }
+
+        // Remove highlight from stars after the clicked star
+        for (var j = value + 1; j <= 5; j++) {
+            $('#star-' + j).removeClass('fa-star').addClass('fa-star-o');
+        }
+
+        // Update the star count
+        starCount = value;
+        console.log(starCount);
+        // Send the starCount to the server using an AJAX request
+        // Replace this with your actual AJAX request code
+      
+});
+
+         // Handle form submission
+    $('#review-form').submit(function(event) {
+        event.preventDefault(); // Prevent default form submission
+      // Get the rating count (number of filled stars)
+      // Get form data
+      var product_id = $('#product_id').val();
+      console.log(product_id);
+      var name = $('#name').val();
+      var email = $('#email').val();
+      var message = $('#message').val();
+      var rating = $(this).find('.fa-star').length; // Get the number of filled stars
+
+      // Create an object to hold the data
+      var formData = {
+        product_id:product_id,
+          name: name,
+          email: email,
+          message: message,
+          rating: rating,
+          isReview:true,
+      };
+        // console.log(selectedRating);
+        $.ajax({
+            url:'php_files/user_action.php',
+            type:"POST",
+            data:formData,
+            dataType:"json",
+            beforeSend : function(){
+                // Show the preloader
+            $('#preloader').show();
+                
+            },
+            success:function(response){
+
+                if(response.hasOwnProperty('success')){
+                var successMessage = response.success;
+                setTimeout(()=>{
+                // Handle success
+                showPopup(successMessage,true);
+                $('#preloader').hide();
+                },2000)
+
+                $('#name').val('');
+                 $('#email').val('');
+                $('#message').val('');
+                $('.star-icon li i.fa-star').removeClass('fa-star').addClass('fa-star-o');
+
+                // Process the response data if needed
+
+                var review_data = response.review_data;
+                console.log(review_data);
+                var review_star = review_data.rating;
+                var starIcon = '';
+                if(review_star > 0){
+                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
+                }if(review_star >= 1){
+                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
+                
+                }if(review_star >= 2){
+                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
+                
+                }if(review_star >= 3){
+                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
+                
+                }if(review_star >= 4){
+                    starIcon += ` <li><i class="fa fa-star fa-sm text-warning"></i></li>`
+                }
+                // console.log(starIcon);
+
+                var reviewer = `<div class="row">
+                <div class="col-sm-5">
+                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image"
+                        class="img-rounded" width="20" height="20">
+                        <p class="text-muted m-0">${review_data['email']}?></p>
+                           <div class="review-block-date">
+                        <p class="text-muted">${response.review_time} </p>
+                        <p class="text-muted">${response.review_date} </p>
+                        </div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="review-block-rate">
+                        <ul class="list-unstyled d-flex justify-content-left mb-0">
+                       ${starIcon}
+                        </ul>
+                    </div>
+                    <div class="review-block-description"><blockquote class="blockquote">
+                    <p>${review_data['message']}</p>
+                    <footer class="blockquote-footer">${review_data['name']}</footer>
+                    </blockquote>
+                    </div>
+                </div>
+            </div>`;
+
+            $('.review-block').append(reviewer);
+         }
+
+                else if(response.hasOwnProperty('error')){
+                var errorMessage = response.error;
+                 // Handle success
+                 showPopup(errorMessage,false);
+                 // Process the response data if needed
+                 $('#preloader').hide()
+                }
+                else if(response.hasOwnProperty('notLogin')){
+                    $('#loginMessageText').html(`<span>Please Please login before add to Wishlist</span> <a href="#" data-toggle="modal" class="btn btn-outline-primary" data-dismiss="modal" data-target="#user_login_form">Login</a>`);
+                    $('#loginMessageModal').modal('show');
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                showPopup('Error sending data: ' + error, false);
+                $('#preloader').hide();
+            }
+
+        })
+
+});
+
+
+
+ // Hover event for star icons (for visual feedback)
+ $('ul li i').hover(function() {
+    // Get the data-value attribute of the hovered star
+    var value = $(this).data('value');
+
+        // Add the star-scale class to apply the scale effect on hover
+        $(this).addClass('star-scale');
+
+    // Highlight the hovered star and stars before it (like in your original code)
+    for (var i = 1; i <= value; i++) {
+        $('#star-' + i).removeClass('fa-star-o').addClass('fa-star');
+    }
+
+    // Remove the hover effect when the mouse leaves the star (mouseleave)
+    $(this).mouseleave(function() {
+
+    // Remove the star-scale class to revert to the original size
+    $(this).removeClass('star-scale');
+
+        for (var i = 1; i <= 5; i++) {
+            if (i > starCount) {
+                $('#star-' + i).removeClass('fa-star').addClass('fa-star-o');
+            }
+        }
+    });
+});
+
+
+var isLoading = false;
+var displayedCount = 3; // Number of reviews initially displayed
+$('#load-more-btn').on('click', function() {
+    if (isLoading) return; // Prevent multiple requests
+
+    isLoading = true;
+
+    var product_id = $(this).data('product-id');
+
+    $.ajax({
+        url: "php_files/user_action.php",
+        type: "POST",
+        data: {isClicked:'1',productId: product_id, displayedCount: displayedCount, limit: 3 },
+        dataType: "json",
+        success: function(response) {
+            console.log(response.review_data);
+            if (response.length === 0) {
+                // No more reviews available
+                $("#load-more-btn").hide().text("No More Data");
+            } else {
+
+                console.log(response.review_data);
+
+                var loaderReviews = response.review_data;
+                console.log(loaderReviews);
+
+                each.each(loaderReviews,function(index,review){
+
+                var reviewer = `<div class="row">
+                <div class="col-sm-5">
+                    <img src="http://dummyimage.com/60x60/666/ffffff&text=No+Image"
+                        class="img-rounded" width="20" height="20">
+                        <p class="text-muted m-0">${review.email}</p>
+                           <div class="review-block-date">
+                        <p class="text-muted">${review.review_time} </p>
+                        <p class="text-muted">${review.review_date} </p>
+                        </div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="review-block-rate">
+                        <ul class="list-unstyled d-flex justify-content-left mb-0">
+
+            <li>
+                <i class="fa  ${review['rating'] >= 1  ? 'fa-star ': 'fa-star-o'}  fa-sm text-warning"></i>
+            </li>
+            <li>
+
+            <i class="fa ${review['rating'] >= 2  ? 'fa-star ': 'fa-star-o'}  fa-sm text-warning"></i>
+
+            </li>
+            <li>
+
+            <i class="fa ${review['rating'] >= 3  ? 'fa-star ': 'fa-star-o'}  fa-sm text-warning"></i>
+
+            </li>
+            <li>
+
+            <i class="fa ${review['rating'] >= 4  ? 'fa-star ': 'fa-star-o'}  fa-sm text-warning"></i>
+
+            </li>
+
+            <li>
+            
+            <i class="fa ${review['rating'] >= 5  ? 'fa-star ': 'fa-star-o'}  fa-sm text-warning"></i>
+
+            </li>
+
+                        </ul>
+                    </div>
+                    <div class="review-block-description"><blockquote class="blockquote">
+                    <p>${review['message']}</p>
+                    <footer class="blockquote-footer">${review['name']}</footer>
+                    </blockquote>
+                    </div>
+                </div>
+            </div>`;
+
+            $('.review-block').append(reviewer);
+            
+        })
+
+                    // Update the count of displayed items
+                    displayedCount += response.length;
+        }
+
+        isLoading = false;
+    }
+
+})
+                            // Check if no more data is available
+ })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Function to show a success or error popup
+function showPopup(message, isSuccess) {
+    const popup = $('#popup');
+    const popupMessage = $('.popup-message');
+
+    popupMessage.text(message);
+
+   /*  if (isSuccess) {
+        popup.css('background-color', '#28a745'); // Green for success
+    } else {
+        popup.css('background-color', '#dc3545'); // Red for error
+    } */
+
+    if (isSuccess) {
+        popup.css('background-color', '#4CAF50'); // Custom color for success (Green)
+    } else {
+        popup.css('background-color', '#FF5733'); // Custom color for danger (Reddish)
+    }
+
+    popup.fadeIn();
+    setTimeout(function() {
+        popup.fadeOut();
+    }, 3000); // Hide the popup after 3 seconds (adjust as needed)
+}
+
 
 });
